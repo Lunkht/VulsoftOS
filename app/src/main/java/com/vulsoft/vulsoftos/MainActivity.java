@@ -1265,6 +1265,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
 
         updateAdaptiveSizes();
         updateAppSpacing();
+        updateDockLayout();
     }
 
     private void showAppOptions(AppItem appItem, View view) {
@@ -1498,6 +1499,25 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         }
         saveCurrentLayout();
         Toast.makeText(this, "Widget supprimé", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateDockLayout() {
+        if (recyclerDock == null) return;
+
+        recyclerDock.post(() -> {
+            int width = recyclerDock.getWidth();
+            if (width > 0) {
+                int paddingHorizontal = recyclerDock.getPaddingStart() + recyclerDock.getPaddingEnd();
+                int availableWidth = width - paddingHorizontal;
+                // Use default 4 columns if columnsPerRow is invalid (though it defaults to 4)
+                int cols = columnsPerRow > 0 ? columnsPerRow : 4;
+                int cellWidth = availableWidth / cols;
+
+                if (dockAdapter != null) {
+                    dockAdapter.setCellWidth(cellWidth);
+                }
+            }
+        });
     }
 
     @Override
