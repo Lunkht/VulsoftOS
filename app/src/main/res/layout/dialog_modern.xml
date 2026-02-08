@@ -62,8 +62,12 @@
             android:paddingVertical="10dp"
             android:paddingHorizontal="16dp"
             android:background="?attr/selectableItemBackground"
-            android:layout_marginEnd="auto"
             android:visibility="gone"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/dialogNegative"
