@@ -811,20 +811,14 @@ public class SettingsActivity extends BaseActivity {
                 return "Zoom";
             case "depth":
                 return "Profondeur";
-            case "cube":
-                return "Cube";
-            case "flip":
-                return "Retournement";
-            case "rotate":
-                return "Rotation";
             default:
                 return "Par défaut";
         }
     }
 
     private void showTransitionSelectionDialog(TextView txtStatus) {
-        final String[] options = { "Par défaut", "Zoom", "Profondeur", "Cube", "Retournement", "Rotation" };
-        final String[] keys = { "default", "zoom", "depth", "cube", "flip", "rotate" };
+        final String[] options = { "Par défaut", "Zoom", "Profondeur" };
+        final String[] keys = { "default", "zoom", "depth" };
 
         String currentKey = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getString("transition_effect",
                 "default");
@@ -836,25 +830,24 @@ public class SettingsActivity extends BaseActivity {
             }
         }
 
-        new android.app.AlertDialog.Builder(this)
+        new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
                 .setTitle("Animation de défilement")
-                .setSingleChoiceItems(options, checkedItem, (dialog, which) -> {
-                    String selectedKey = keys[which];
+                .setSingleChoiceItems(options, checkedItem, (index, value) -> {
+                    String selectedKey = keys[index];
                     getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
                             .putString("transition_effect", selectedKey).apply();
-                    txtStatus.setText(options[which]);
-                    dialog.dismiss();
+                    txtStatus.setText(options[index]);
                 })
                 .setNegativeButton("Annuler", null)
                 .show();
     }
 
     private void showResetConfirmationDialog() {
-        new android.app.AlertDialog.Builder(this)
+        new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
                 .setTitle("Réinitialisation")
                 .setMessage(
                         "Êtes-vous sûr de vouloir réinitialiser tous les paramètres ?\nCette action est irréversible.")
-                .setPositiveButton("Réinitialiser", (dialog, which) -> resetToFactorySettings())
+                .setPositiveButton("Réinitialiser", (v) -> resetToFactorySettings())
                 .setNegativeButton("Annuler", null)
                 .show();
     }
@@ -876,13 +869,23 @@ public class SettingsActivity extends BaseActivity {
         statusView.setText(getLabelForValue(currentVal));
 
         btn.setOnClickListener(v -> {
-            new android.app.AlertDialog.Builder(this)
+            int checkedItem = 0;
+            String current = prefs.getString(key, defaultValue);
+            for (int i = 0; i < gestureValues.length; i++) {
+                if (gestureValues[i].equals(current)) {
+                    checkedItem = i;
+                    break;
+                }
+            }
+
+            new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
                 .setTitle("Choisir une action")
-                .setItems(gestureOptions, (dialog, which) -> {
-                    String selectedValue = gestureValues[which];
+                .setSingleChoiceItems(gestureOptions, checkedItem, (index, value) -> {
+                    String selectedValue = gestureValues[index];
                     prefs.edit().putString(key, selectedValue).apply();
-                    statusView.setText(gestureOptions[which]);
+                    statusView.setText(gestureOptions[index]);
                 })
+                .setNegativeButton("Annuler", null)
                 .show();
         });
     }
@@ -1351,13 +1354,13 @@ public class SettingsActivity extends BaseActivity {
             }
         }
         
-        new android.app.AlertDialog.Builder(this)
+        new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
             .setTitle("Style Dynamic Island")
-            .setSingleChoiceItems(options, checkedItem, (dialog, which) -> {
-                String selected = values[which];
+            .setSingleChoiceItems(options, checkedItem, (index, value) -> {
+                String selected = values[index];
                 getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
                         .putString("dynamic_island_style", selected).apply();
-                statusView.setText(options[which]);
+                statusView.setText(options[index]);
                 
                 // Restart service if enabled to apply changes
                 boolean isEnabled = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getBoolean("dynamic_island_enabled", false);
@@ -1367,8 +1370,6 @@ public class SettingsActivity extends BaseActivity {
                          startForegroundService(new android.content.Intent(this, DynamicIslandService.class));
                     }
                 }
-                
-                dialog.dismiss();
             })
             .setNegativeButton("Annuler", null)
             .show();

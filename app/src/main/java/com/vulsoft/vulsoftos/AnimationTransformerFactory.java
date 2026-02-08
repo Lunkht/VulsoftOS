@@ -11,12 +11,6 @@ public class AnimationTransformerFactory {
                 return new ZoomOutPageTransformer();
             case "depth":
                 return new DepthPageTransformer();
-            case "cube":
-                return new CubeOutTransformer();
-            case "flip":
-                return new FlipTransformer();
-            case "rotate":
-                return new RotateTransformer();
             default:
                 return null; // Default behavior
         }
@@ -112,80 +106,6 @@ public class AnimationTransformerFactory {
             } else { // (1,+Infinity]
                 // This page is way off-screen to the right.
                 view.setAlpha(0f);
-            }
-        }
-    }
-
-    public static class CubeOutTransformer implements ViewPager2.PageTransformer {
-        @Override
-        public void transformPage(View view, float position) {
-            resetPage(view);
-            if (position < -1){    // [-Infinity,-1)
-                // This page is way off-screen to the left.
-                view.setAlpha(0);
-
-            } else if (position <= 0){    // [-1,0]
-                view.setAlpha(1);
-                view.setPivotX(view.getWidth());
-                view.setRotationY(-90 * Math.abs(position));
-
-            } else if (position <= 1){    // (0,1]
-                view.setAlpha(1);
-                view.setPivotX(0);
-                view.setRotationY(90 * Math.abs(position));
-
-            } else {    // (1,+Infinity]
-                // This page is way off-screen to the right.
-                view.setAlpha(0);
-            }
-        }
-    }
-
-    public static class FlipTransformer implements ViewPager2.PageTransformer {
-        @Override
-        public void transformPage(View page, float position) {
-            resetPage(page);
-            page.setTranslationX(-position * page.getWidth());
-            // page.setCameraDistance(12000); // Already set in resetPage with density aware value
-
-            if (position < 0.5 && position > -0.5) {
-                page.setVisibility(View.VISIBLE);
-            } else {
-                page.setVisibility(View.INVISIBLE);
-            }
-
-            if (position < -1) {     // [-Infinity,-1)
-                page.setAlpha(0);
-            } else if (position <= 0) {    // [-1,0]
-                page.setAlpha(1);
-                page.setRotationY(180 * (1 - Math.abs(position) + 1));
-            } else if (position <= 1) {    // (0,1]
-                page.setAlpha(1);
-                page.setRotationY(-180 * (1 - Math.abs(position) + 1));
-            } else {    // (1,+Infinity]
-                page.setAlpha(0);
-            }
-        }
-    }
-
-    public static class RotateTransformer implements ViewPager2.PageTransformer {
-        @Override
-        public void transformPage(View page, float position) {
-            resetPage(page);
-            if (position < -1) {
-                page.setAlpha(0);
-            } else if (position <= 0) {
-                page.setAlpha(1);
-                page.setPivotX(page.getWidth() * 0.5f);
-                page.setPivotY(page.getHeight());
-                page.setRotation(-15 * Math.abs(position));
-            } else if (position <= 1) {
-                page.setAlpha(1);
-                page.setPivotX(page.getWidth() * 0.5f);
-                page.setPivotY(page.getHeight());
-                page.setRotation(15 * Math.abs(position));
-            } else {
-                page.setAlpha(0);
             }
         }
     }

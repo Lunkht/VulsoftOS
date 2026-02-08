@@ -3,37 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground">
+    android:background="@color/oneui_background_dark">
 
-    <!-- Header -->
+    <!-- Header (Floating/Transparent) -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="?attr/colorSurface"
-        android:elevation="4dp"
-        android:paddingHorizontal="8dp"
+        android:layout_height="wrap_content"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp"
+        android:background="@android:color/transparent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_search_bar"
+            android:padding="10dp"
             android:src="@drawable/arrow_small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorOnSurface" />
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Assistant Vulsoft"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="18sp"
+            android:text="Assistant"
+            android:textColor="@color/white"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -42,19 +42,19 @@
 
         <ImageView
             android:id="@+id/btnHistory"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_search_bar"
+            android:padding="10dp"
             android:src="@android:drawable/ic_menu_recent_history"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorOnSurface" />
+            app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Welcome Section (Visible when no messages) -->
+    <!-- Welcome Section -->
     <LinearLayout
         android:id="@+id/welcomeSection"
         android:layout_width="match_parent"
@@ -66,20 +66,20 @@
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:alpha="0.6"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:src="@drawable/bg_squircle"
             app:tint="?attr/colorPrimary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Comment puis-je vous aider ?"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="24dp"
+            android:text="Bonjour, je suis votre Assistant"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -87,9 +87,9 @@
             android:layout_marginTop="8dp"
             android:alpha="0.7"
             android:gravity="center"
-            android:text="Posez une question ou dites 'Ouvrir YouTube'"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="14sp" />
+            android:text="Comment puis-je vous aider aujourd'hui ?"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
     </LinearLayout>
 
@@ -99,54 +99,56 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:padding="12dp"
-        android:scrollbars="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="80dp" 
         app:layout_constraintBottom_toTopOf="@+id/inputArea"
         app:layout_constraintTop_toBottomOf="@id/header" />
-
-    <!-- Input Area -->
-    <androidx.cardview.widget.CardView
+    
+    <!-- Input Area (Floating Capsule) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/inputArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="8dp"
+        android:padding="16dp"
+        android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="4dp">
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <EditText
                 android:id="@+id/inputMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="Tapez votre message..."
-                android:inputType="textCapSentences|textMultiLine"
-                android:maxLines="4"
-                android:padding="12dp"
-                android:textColor="?attr/colorOnSurface"
-                android:textColorHint="#888888"
-                android:textSize="15sp" />
+                android:background="@null"
+                android:hint="Posez une question..."
+                android:textColor="@color/white"
+                android:textColorHint="#80FFFFFF"
+                android:textSize="16sp"
+                android:maxLines="3"
+                android:padding="12dp"/>
 
             <ImageButton
                 android:id="@+id/btnSend"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="4dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:background="@drawable/bg_squircle"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@android:drawable/ic_menu_send"
-                app:tint="@android:color/white" />
-
+                android:backgroundTint="?attr/colorPrimary"
+                android:src="@drawable/ic_send"
+                android:padding="10dp"
+                app:tint="@color/white" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

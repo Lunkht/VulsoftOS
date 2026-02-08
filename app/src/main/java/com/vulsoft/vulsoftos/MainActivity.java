@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.net.Uri;
 import android.provider.Settings;
-import android.app.AlertDialog;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -201,10 +200,10 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
 
         // Check Notification Listener Permission
         if (!isNotificationServiceEnabled()) {
-            new android.app.AlertDialog.Builder(this)
+            new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
                     .setTitle(R.string.permission_notification_title)
                     .setMessage(R.string.permission_notification_msg)
-                    .setPositiveButton(R.string.permission_button_allow, (dialog, which) -> {
+                    .setPositiveButton(R.string.permission_button_allow, v -> {
                         startActivity(new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
                     })
                     .setNegativeButton(R.string.permission_button_later, null)
@@ -615,10 +614,10 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
             RecentAppsDialogFragment dialog = new RecentAppsDialogFragment();
             dialog.show(getSupportFragmentManager(), "RecentAppsDialog");
         } else {
-            new AlertDialog.Builder(this)
+            new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
                     .setTitle(R.string.permission_usage_title)
                     .setMessage(R.string.permission_usage_msg)
-                    .setPositiveButton(R.string.permission_button_grant, (d, w) -> {
+                    .setPositiveButton(R.string.permission_button_grant, v -> {
                         startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
                     })
                     .setNegativeButton(R.string.permission_button_cancel, null)

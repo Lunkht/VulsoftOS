@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.app.AlertDialog;
 import com.vulsoft.vulsoftos.IconShapeHelper;
 import com.vulsoft.vulsoftos.IconPackManager;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -207,12 +206,11 @@ public class GridSettingsBottomSheet extends BottomSheetDialogFragment {
             }
         }
 
-        new AlertDialog.Builder(requireContext())
+        new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(requireContext())
                 .setTitle("Forme des icônes")
-                .setSingleChoiceItems(options, checkedItem, (dialog, which) -> {
-                    IconShapeHelper.saveShape(requireContext(), values[which]);
+                .setSingleChoiceItems(options, checkedItem, (index, value) -> {
+                    IconShapeHelper.saveShape(requireContext(), values[index]);
                     updateIconShapeSummary();
-                    dialog.dismiss();
                     if (getActivity() != null) getActivity().recreate();
                 })
                 .setNegativeButton("Annuler", null)
@@ -244,12 +242,11 @@ public class GridSettingsBottomSheet extends BottomSheetDialogFragment {
             }
         }
 
-        new AlertDialog.Builder(requireContext())
+        new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(requireContext())
                 .setTitle("Pack d'icônes")
-                .setSingleChoiceItems(options, checkedItem, (dialog, which) -> {
-                    IconPackManager.saveIconPack(requireContext(), values[which]);
+                .setSingleChoiceItems(options, checkedItem, (index, value) -> {
+                    IconPackManager.saveIconPack(requireContext(), values[index]);
                     updateIconPackSummary();
-                    dialog.dismiss();
                     if (getActivity() != null) getActivity().recreate();
                 })
                 .setNegativeButton("Annuler", null)

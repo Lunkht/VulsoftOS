@@ -2,7 +2,6 @@ package com.vulsoft.vulsoftos.activities;
 
 import com.vulsoft.vulsoftos.*;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -168,13 +167,13 @@ public class AssistantActivity extends BaseActivity {
             items[i] = dateStr + "\n" + preview;
         }
 
-        new AlertDialog.Builder(this)
+        new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
                 .setTitle("Historique des conversations")
-                .setItems(items, (dialog, which) -> {
-                    showConversationDetails(history.get(which));
+                .setItems(items, (index, value) -> {
+                    showConversationDetails(history.get(index));
                 })
                 .setPositiveButton("Fermer", null)
-                .setNeutralButton("Effacer tout", (dialog, which) -> {
+                .setNeutralButton("Effacer tout", v -> {
                     ConversationManager.clearHistory(this);
                     Toast.makeText(this, "Historique effacé", Toast.LENGTH_SHORT).show();
                 })
@@ -182,10 +181,10 @@ public class AssistantActivity extends BaseActivity {
     }
 
     private void showConversationDetails(List<ChatMessage> sessionMessages) {
-        new AlertDialog.Builder(this)
+        new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
                 .setTitle("Détails de la conversation")
                 .setMessage("Voulez-vous charger cette conversation ? Cela remplacera la conversation actuelle.")
-                .setPositiveButton("Charger", (dialog, which) -> {
+                .setPositiveButton("Charger", v -> {
                     messages.clear();
                     messages.addAll(sessionMessages);
                     adapter.notifyDataSetChanged();
