@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Vulsoft OS</string>
+    <string name="title_settings">设置</string>
+    <string name="clear_dock">重置托盘</string>
+    <string name="show_dock">显示托盘</string>
+    <string name="columns_per_row">每行显示列数</string>
+
+    <string name="switch_theme">切换主题</string>
+    <string name="theme_default">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="theme_blue">(Amoled)</string>
+
+    <string name="settings_dark_mode">深色</string>
+    <string name="settings_light_mode">浅色</string>
+    <string name="settings_system_mode">系统默认</string>
+
+    <!-- System Integration -->
+    <string name="settings">设置</string>
+    <string name="launcher_settings">启动器设置</string>
+    <string name="wallpaper">壁纸</string>
+    <string name="change_wallpaper">更换壁纸</string>
+    <string name="system_integration">系统集成</string>
+    <string name="default_launcher">默认启动器</string>
+    <string name="notification_access">通知访问权限</string>
+    <string name="system_permissions">系统权限</string>
+    <string name="integration_complete">系统集成完成</string>
+    <string name="integration_incomplete">系统集成未完成</string>
+
+    <!-- Permissions & Dialogs -->
+    <string name="permission_notification_title">通知访问权限</string>
+    <string name="permission_notification_msg">Vulsoft OS 需要访问通知权限以在图标上显示角标。</string>
+    <string name="permission_button_allow">允许</string>
+    <string name="permission_button_later">稍后</string>
+    <string name="toast_set_default_launcher">请将 Vulsoft OS 设置为默认启动器以启用 Home 手势。</string>
+    <string name="permission_usage_title">需要权限</string>
+    <string name="permission_usage_msg">为了显示最近使用的应用，Vulsoft OS 需要访问使用情况统计信息。</string>
+    <string name="permission_button_grant">授权</string>
+    <string name="permission_button_cancel">取消</string>
+    
+    <!-- Settings & Backup -->
+    <string name="backup_success">备份成功</string>
+    <string name="backup_error">错误：</string>
+    <string name="restore_success">恢复成功</string>
+    <string name="wallpaper_applied">壁纸已应用</string>
+    
+    <!-- Customization -->
+    <string name="text_size">字体大小</string>
+    <string name="icon_size">图标大小</string>
+    <string name="language">语言</string>
+    <string name="language_fr">Français</string>
+    <string name="language_en">English</string>
+    <string name="language_zh">中文</string>
+    
+    <!-- Menu & Messages -->
+    <string name="menu_app_info">应用信息</string>
+    <string name="menu_hide">隐藏</string>
+    <string name="menu_organize">整理</string>
+    <string name="menu_uninstall">卸载</string>
+    <string name="msg_edit_mode">整理模式已启用。触摸以移动。\n按返回键退出。</string>
+    <string name="msg_edit_mode_end">整理模式已结束</string>
+    <string name="msg_app_hidden">应用已隐藏</string>
+</resources>

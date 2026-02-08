@@ -1,0 +1,688 @@
+package com.valkunt.os;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class SettingsActivity extends BaseActivity {
+
+    private androidx.activity.result.ActivityResultLauncher<androidx.activity.result.PickVisualMediaRequest> pickMedia;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
+
+        pickMedia = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia(), uri -> {
+                    if (uri != null) {
+                        // Persist permission (optional but good practice for some URI types, though
+                        // PickVisualMedia usually grants temp access)
+                        // For long term persistence, we should copy it or take persistable permission
+                        // if possible.
+                        // For now, let's try passing it directly to WallpaperManager which copies logic
+                        // or uses it.
+                        // WallpaperManager.saveCustomWallpaper handles stream copying if needed (it
+                        // sets stream).
+                        // Actually our updated WallpaperManager uses openInputStream.
+                        // To ensure it persists across reboots if it's a content URI that requires
+                        // permission,
+                        // we might need to take persistable URI permission if supported, or copy the
+                        // file.
+                        // The Photo Picker returns a URI that we can read. Let's trust
+                        // WallpaperManager.saveCustomWallpaper
+                        // to set it as system wallpaper (which persists it system-wide).
+                        // But for our app's background 'drawing', we need read access later.
+                        // The most robust way is to copy it to app files.
+                        try {
+                            int takeFlags = android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                            getContentResolver().takePersistableUriPermission(uri, takeFlags);
+                        } catch (Exception e) {
+                            // Photo picker URIs might not support this, but standard open document does.
+                            // Fallback: Just save it.
+                        }
+
+                        WallpaperManager.saveCustomWallpaper(this, uri);
+                        android.widget.Toast.makeText(this, "Fond d'écran appliqué", android.widget.Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
+
+        LinearLayout btnDark = findViewById(R.id.btnDark);
+        LinearLayout btnAmoled = findViewById(R.id.btnAmoled);
+        LinearLayout btnSystem = findViewById(R.id.dark_night);
+        LinearLayout btnGlass = findViewById(R.id.btnGlass);
+        ImageView btnBack = findViewById(R.id.btnBack);
+        LinearLayout btnChangeWallpaper = findViewById(R.id.btnChangeWallpaper);
+
+        btnChangeWallpaper.setOnClickListener(v -> showWallpaperBottomSheet());
+
+        btnDark.setOnClickListener(v -> {
+            ThemeManager.saveTheme(this, ThemeManager.THEME_DARK);
+            recreate();
+        });
+
+        btnAmoled.setOnClickListener(v -> {
+            ThemeManager.saveTheme(this, ThemeManager.THEME_AMOLED);
+            recreate();
+        });
+
+        btnSystem.setOnClickListener(v -> {
+            ThemeManager.saveTheme(this, ThemeManager.THEME_SYSTEM);
+            recreate();
+        });
+
+        btnGlass.setOnClickListener(v -> {
+            ThemeManager.saveTheme(this, ThemeManager.THEME_GLASS);
+            recreate();
+        });
+
+        // Widget Color Buttons
+        findViewById(R.id.colorWidgetWhite).setOnClickListener(v -> saveWidgetColorPreference("#FFFFFF"));
+        findViewById(R.id.colorWidgetBlack).setOnClickListener(v -> saveWidgetColorPreference("#000000"));
+        findViewById(R.id.colorWidgetThemeGlass).setOnClickListener(v -> saveWidgetColorPreference("glass"));
+        findViewById(R.id.colorWidgetThemeRed).setOnClickListener(v -> saveWidgetColorPreference("red"));
+        findViewById(R.id.colorWidgetThemeGreen).setOnClickListener(v -> saveWidgetColorPreference("green"));
+        findViewById(R.id.colorWidgetThemeOrange).setOnClickListener(v -> saveWidgetColorPreference("orange"));
+
+        // Search Bar Style Switch
+        com.google.android.material.switchmaterial.SwitchMaterial switchSearchTrans = findViewById(
+                R.id.switchSearchTrans);
+        String currentSearchStyle = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getString("search_bar_style",
+                "solid");
+        switchSearchTrans.setChecked("transparent".equals(currentSearchStyle));
+
+        switchSearchTrans.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            String newStyle = isChecked ? "transparent" : "solid";
+            savePreference("search_bar_style", newStyle);
+        });
+
+        // About & FAQ
+        findViewById(R.id.btnAbout)
+                .setOnClickListener(v -> startActivity(new android.content.Intent(this, AboutActivity.class)));
+        findViewById(R.id.btnFaq)
+                .setOnClickListener(v -> startActivity(new android.content.Intent(this, FaqActivity.class)));
+
+        // Widget Edit Mode
+        findViewById(R.id.btnEditWidgets).setOnClickListener(v -> {
+            WidgetManager.setEditMode(this, true);
+            android.widget.Toast
+                    .makeText(this, "Mode édition activé. Retournez à l'accueil.", android.widget.Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+        });
+
+        btnBack.setOnClickListener(v -> finish());
+
+        LinearLayout btnSetDefault = findViewById(R.id.idSetDefaultLauncher);
+        btnSetDefault.setOnClickListener(v -> {
+            SystemIntegrationManager.requestDefaultLauncherRole(this);
+        });
+
+        // Ajouter boutons pour l'intégration système (si disponibles dans le layout)
+        View btnSystemPermissions = findViewById(
+                getResources().getIdentifier("btnSystemPermissions", "id", getPackageName()));
+        if (btnSystemPermissions != null) {
+            btnSystemPermissions.setOnClickListener(v -> requestSystemPermissions());
+        }
+
+        View btnNotificationAccess = findViewById(
+                getResources().getIdentifier("btnNotificationAccess", "id", getPackageName()));
+        if (btnNotificationAccess != null) {
+            btnNotificationAccess.setOnClickListener(v -> requestNotificationAccess());
+        }
+
+        // Dock Background Switch
+        int switchDockBgId = getResources().getIdentifier("switchDockBg", "id", getPackageName());
+        if (switchDockBgId != 0) {
+            com.google.android.material.switchmaterial.SwitchMaterial switchDockBg = findViewById(switchDockBgId);
+            boolean isDockBgEnabled = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getBoolean("dock_bg_enabled",
+                    true);
+            switchDockBg.setChecked(isDockBgEnabled);
+            switchDockBg.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit().putBoolean("dock_bg_enabled", isChecked)
+                        .apply();
+            });
+        }
+
+        // Icon Grid RadioGroup
+        int radioGridId = getResources().getIdentifier("radioGrid", "id", getPackageName());
+        if (radioGridId != 0) {
+            android.widget.RadioGroup radioGrid = findViewById(radioGridId);
+            String currentGrid = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getString("icon_grid", "5x6");
+
+            int grid4x6Id = getResources().getIdentifier("grid4x6", "id", getPackageName());
+            int grid5x6Id = getResources().getIdentifier("grid5x6", "id", getPackageName());
+
+            if (grid4x6Id != 0 && "4x6".equals(currentGrid)) {
+                radioGrid.check(grid4x6Id);
+            } else if (grid5x6Id != 0) {
+                radioGrid.check(grid5x6Id);
+            }
+
+            radioGrid.setOnCheckedChangeListener((group, checkedId) -> {
+                String newGrid = (grid4x6Id != 0 && checkedId == grid4x6Id) ? "4x6" : "5x6";
+                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit().putString("icon_grid", newGrid).apply();
+            });
+        }
+
+        // Snap to Grid Switch
+        int switchSnapToGridId = getResources().getIdentifier("switchSnapToGrid", "id", getPackageName());
+        if (switchSnapToGridId != 0) {
+            com.google.android.material.switchmaterial.SwitchMaterial switchSnapToGrid = findViewById(
+                    switchSnapToGridId);
+            boolean isSnapToGridEnabled = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getBoolean(
+                    "snap_to_grid",
+                    true);
+            switchSnapToGrid.setChecked(isSnapToGridEnabled);
+            switchSnapToGrid.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit().putBoolean("snap_to_grid", isChecked)
+                        .apply();
+            });
+        }
+
+        // Stack Depth SeekBar
+        int seekBarStackDepthId = getResources().getIdentifier("seekBarStackDepth", "id", getPackageName());
+        int txtStackDepthId = getResources().getIdentifier("txtStackDepth", "id", getPackageName());
+        if (seekBarStackDepthId != 0 && txtStackDepthId != 0) {
+            android.widget.SeekBar seekBarStackDepth = findViewById(seekBarStackDepthId);
+            TextView txtStackDepth = findViewById(txtStackDepthId);
+            int currentStackDepth = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getInt("stack_depth", 5);
+            seekBarStackDepth.setProgress(currentStackDepth);
+            txtStackDepth.setText(String.valueOf(currentStackDepth));
+
+            seekBarStackDepth.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
+                    txtStackDepth.setText(String.valueOf(progress));
+                }
+
+                @Override
+                public void onStartTrackingTouch(android.widget.SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(android.widget.SeekBar seekBar) {
+                    getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
+                            .putInt("stack_depth", seekBar.getProgress()).apply();
+                }
+            });
+        }
+
+        // Icon Shape SeekBar
+        int seekBarRadiusId = getResources().getIdentifier("seekBarRadius", "id", getPackageName());
+        int txtRadiusPercentageId = getResources().getIdentifier("txtRadiusPercentage", "id", getPackageName());
+        if (seekBarRadiusId != 0 && txtRadiusPercentageId != 0) {
+            android.widget.SeekBar seekBarRadius = findViewById(seekBarRadiusId);
+            TextView txtRadiusPercentage = findViewById(txtRadiusPercentageId);
+            int currentRadius = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getInt("icon_corner_radius", 50);
+            seekBarRadius.setProgress(currentRadius);
+            txtRadiusPercentage.setText(currentRadius + "%");
+
+            seekBarRadius.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
+                    txtRadiusPercentage.setText(progress + "%");
+                }
+
+                @Override
+                public void onStartTrackingTouch(android.widget.SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(android.widget.SeekBar seekBar) {
+                    getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
+                            .putInt("icon_corner_radius", seekBar.getProgress()).apply();
+                }
+            });
+        }
+
+        // Blur SeekBar
+        int seekBarBlurId = getResources().getIdentifier("seekBarBlur", "id", getPackageName());
+        int txtBlurPercentageId = getResources().getIdentifier("txtBlurPercentage", "id", getPackageName());
+        if (seekBarBlurId != 0 && txtBlurPercentageId != 0) {
+            android.widget.SeekBar seekBarBlur = findViewById(seekBarBlurId);
+            TextView txtBlurPercentage = findViewById(txtBlurPercentageId);
+            int currentBlur = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getInt("wallpaper_blur_radius", 0);
+            seekBarBlur.setProgress(currentBlur);
+            txtBlurPercentage.setText(currentBlur + "%");
+
+            seekBarBlur.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
+                    txtBlurPercentage.setText(progress + "%");
+                }
+
+                @Override
+                public void onStartTrackingTouch(android.widget.SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(android.widget.SeekBar seekBar) {
+                    getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
+                            .putInt("wallpaper_blur_radius", seekBar.getProgress()).apply();
+                }
+            });
+        }
+
+        // Wallpaper Scale Type Buttons
+        setupWallpaperScaleButtons();
+
+        // Icon Style Toggles
+        int switchForceStyleId = getResources().getIdentifier("switchForceStyle", "id", getPackageName());
+        if (switchForceStyleId != 0) {
+            com.google.android.material.switchmaterial.SwitchMaterial switchForceStyle = findViewById(
+                    switchForceStyleId);
+            boolean forceStyleEnabled = IconPackManager.isForceStyleEnabled(this);
+            switchForceStyle.setChecked(forceStyleEnabled);
+            switchForceStyle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
+                        .putBoolean("force_icon_style", isChecked).apply();
+                android.widget.Toast.makeText(this, "Style appliqué", android.widget.Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        int switchThemedIconsId = getResources().getIdentifier("switchThemedIcons", "id", getPackageName());
+        if (switchThemedIconsId != 0) {
+            com.google.android.material.switchmaterial.SwitchMaterial switchThemedIcons = findViewById(
+                    switchThemedIconsId);
+            boolean themedIconsEnabled = IconPackManager.isThemedIconsEnabled(this);
+            switchThemedIcons.setChecked(themedIconsEnabled);
+            switchThemedIcons.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
+                        .putBoolean("themed_icons_enabled", isChecked).apply();
+                android.widget.Toast.makeText(this, "Icônes thématiques " + (isChecked ? "activées" : "désactivées"),
+                        android.widget.Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        // Label Visibility Toggle
+        com.google.android.material.switchmaterial.SwitchMaterial switchShowLabels = findViewById(
+                R.id.switchShowLabels);
+        if (switchShowLabels != null) {
+            boolean showLabels = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getBoolean("show_labels", true);
+            switchShowLabels.setChecked(showLabels);
+            switchShowLabels.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
+                        .putBoolean("show_labels", isChecked).apply();
+                android.widget.Toast.makeText(this, "Noms d'apps " + (isChecked ? "visibles" : "masqués"),
+                        android.widget.Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        // Hidden Apps Management
+        findViewById(R.id.btnHiddenApps).setOnClickListener(v -> showHiddenAppsDialog());
+
+        // Focus Mode
+        com.google.android.material.switchmaterial.SwitchMaterial switchFocus = findViewById(R.id.switchFocusMode);
+        boolean isFocusEnabled = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getBoolean("focus_mode_enabled",
+                false);
+        switchFocus.setChecked(isFocusEnabled);
+
+        findViewById(R.id.btnFocusMode).setOnClickListener(v -> {
+            boolean newState = !switchFocus.isChecked();
+            switchFocus.setChecked(newState);
+            getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
+                    .putBoolean("focus_mode_enabled", newState).apply();
+
+            android.widget.Toast.makeText(this, "Focus Mode " + (newState ? "activé" : "désactivé"),
+                    android.widget.Toast.LENGTH_SHORT).show();
+            // We should ideally tell MainActivity to refresh, but for now just saving is
+            // enough
+            // as it will refresh on resume if implemented.
+        });
+
+        // Smart Folders
+        int btnSmartFoldersId = getResources().getIdentifier("btnSmartFolders", "id", getPackageName());
+        if (btnSmartFoldersId != 0) {
+            findViewById(btnSmartFoldersId).setOnClickListener(v -> {
+                android.content.pm.PackageManager pm = getPackageManager();
+                AppLayoutManager.SavedLayout layout = AppLayoutManager.loadLayout(this, pm);
+                if (layout != null) {
+                    // Combine grid and dock for categorization
+                    List<AppInfo> allApps = new ArrayList<>(layout.gridApps);
+                    allApps.addAll(layout.dockApps);
+
+                    // Only categorize real apps (not placeholders, not folders)
+                    List<AppInfo> appsToCategorize = new ArrayList<>();
+                    for (AppInfo app : allApps) {
+                        if (!app.isPlaceholder() && !app.isFolder())
+                            appsToCategorize.add(app);
+                    }
+
+                    java.util.Map<String, List<AppInfo>> categories = CategorizationManager
+                            .categorize(appsToCategorize);
+
+                    if (categories.isEmpty()) {
+                        android.widget.Toast
+                                .makeText(this, "Aucune application à catégoriser", android.widget.Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
+
+                    // Create folders and update grid
+                    List<AppInfo> newGrid = new ArrayList<>();
+                    for (java.util.Map.Entry<String, List<AppInfo>> entry : categories.entrySet()) {
+                        if (entry.getValue().size() >= 2) {
+                            newGrid.add(new AppInfo(entry.getKey(), entry.getValue()));
+                        } else {
+                            newGrid.addAll(entry.getValue());
+                        }
+                    }
+
+                    // Add remaining apps that were not categorized
+                    java.util.Set<String> categorizedPkgs = new java.util.HashSet<>();
+                    for (List<AppInfo> list : categories.values()) {
+                        for (AppInfo a : list)
+                            categorizedPkgs.add(a.getPackageName());
+                    }
+
+                    for (AppInfo app : appsToCategorize) {
+                        if (!categorizedPkgs.contains(app.getPackageName())) {
+                            newGrid.add(app);
+                        }
+                    }
+
+                    // Fill with placeholders to maintain 108 slots (or just let it be)
+                    while (newGrid.size() < 108)
+                        newGrid.add(AppInfo.createPlaceholder());
+
+                    AppLayoutManager.saveLayout(this, newGrid, layout.dockApps);
+                    android.widget.Toast
+                            .makeText(this, "Applications organisées en Smart Folders !",
+                                    android.widget.Toast.LENGTH_SHORT)
+                            .show();
+                    finish(); // Return to home to see changes
+                }
+            });
+        }
+
+        // Handle Insets
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content),
+                (v, insets) -> {
+                    androidx.core.graphics.Insets systemBars = insets
+                            .getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+                    v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                    return insets;
+                });
+    }
+
+    private void showWallpaperBottomSheet() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_wallpaper_bottom_sheet, null);
+        bottomSheetDialog.setContentView(view);
+
+        androidx.recyclerview.widget.RecyclerView recyclerWallpapers = view.findViewById(R.id.recyclerWallpapers);
+        LinearLayout btnApplyWallpaper = view.findViewById(R.id.btnApplyWallpaper);
+
+        List<Integer> wallpapers = new ArrayList<>(Arrays.asList(
+                R.drawable.wallpaper_purple,
+                R.drawable.wallpaper_blue,
+                R.drawable.wallpaper_dark,
+                R.drawable.wallpaper_black,
+                R.drawable.wallpaper_orange,
+                R.drawable.wallpaper_green,
+                R.drawable.benin,
+                R.drawable.burkina_faso,
+                R.drawable.ghana,
+                R.drawable.guinea,
+                R.drawable.ivory_cost,
+                R.drawable.mali,
+                R.drawable.nageria));
+
+        // Get current wallpaper to show selection
+        int currentWallpaper = WallpaperManager.getSavedWallpaper(this);
+        int initialSelection = wallpapers.indexOf(currentWallpaper);
+
+        WallpaperAdapter adapter = new WallpaperAdapter(wallpapers, position -> {
+            // Updated to handle internal selection state
+            ((WallpaperAdapter) recyclerWallpapers.getAdapter()).setSelectedPosition(position);
+        });
+
+        recyclerWallpapers.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(this, 3));
+        recyclerWallpapers.setAdapter(adapter);
+
+        if (initialSelection != -1) {
+            adapter.setSelectedPosition(initialSelection);
+            recyclerWallpapers.scrollToPosition(initialSelection);
+        }
+
+        LinearLayout btnPickGallery = view.findViewById(R.id.btnPickGallery);
+
+        if (btnPickGallery != null) {
+            btnPickGallery.setOnClickListener(v -> {
+                pickMedia.launch(new androidx.activity.result.PickVisualMediaRequest.Builder()
+                        .setMediaType(
+                                androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+                bottomSheetDialog.dismiss();
+            });
+        }
+
+        btnApplyWallpaper.setOnClickListener(v -> {
+            int selectedPosition = adapter.getSelectedPosition();
+            if (selectedPosition != -1) {
+                int selectedWallpaperRes = wallpapers.get(selectedPosition);
+                WallpaperManager.saveWallpaper(this, selectedWallpaperRes);
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        bottomSheetDialog.show();
+    }
+
+    private void requestDefaultLauncherRole() {
+        SystemIntegrationManager.requestDefaultLauncherRole(this);
+    }
+
+    private void requestSystemPermissions() {
+        SystemIntegrationManager.requestSystemPermissions(this);
+    }
+
+    private void requestNotificationAccess() {
+        SystemIntegrationManager.requestNotificationAccess(this);
+    }
+
+    private void openHomeSettings() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            android.app.role.RoleManager roleManager = (android.app.role.RoleManager) getSystemService(
+                    android.content.Context.ROLE_SERVICE);
+            if (roleManager != null && roleManager.isRoleAvailable(android.app.role.RoleManager.ROLE_HOME)) {
+                if (!roleManager.isRoleHeld(android.app.role.RoleManager.ROLE_HOME)) {
+                    android.content.Intent intent = roleManager
+                            .createRequestRoleIntent(android.app.role.RoleManager.ROLE_HOME);
+                    startActivityForResult(intent, 123);
+                    return;
+                }
+            }
+        }
+
+        // Fallback for older versions or if RoleManager fails
+        android.content.Intent intent = new android.content.Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            // If ACTION_HOME_SETTINGS is not supported, try the generic main home intent
+            android.content.Intent homeIntent = new android.content.Intent(android.content.Intent.ACTION_MAIN);
+            homeIntent.addCategory(android.content.Intent.CATEGORY_HOME);
+            homeIntent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(homeIntent);
+        }
+    }
+
+    private void savePreference(String key, String value) {
+        getSharedPreferences("launcher_prefs", MODE_PRIVATE)
+                .edit()
+                .putString(key, value)
+                .apply();
+        android.widget.Toast.makeText(this, "Réglage enregistré", android.widget.Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveWidgetColorPreference(String color) {
+        WidgetCustomizationManager.saveWidgetTextColor(this, color);
+        android.widget.Toast.makeText(this, "Couleur de widget enregistrée", android.widget.Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupWallpaperScaleButtons() {
+        // Boutons pour le type de redimensionnement du fond d'écran
+        View btnCenterCrop = findViewById(
+                getResources().getIdentifier("btnWallpaperCenterCrop", "id", getPackageName()));
+        if (btnCenterCrop != null) {
+            btnCenterCrop.setOnClickListener(v -> {
+                WallpaperManager.setScaleType(this, WallpaperDrawable.ScaleType.CENTER_CROP);
+                android.widget.Toast.makeText(this, "Mode: Recadrage centré", android.widget.Toast.LENGTH_SHORT)
+                        .show();
+                // Rafraîchir l'affichage
+                recreate();
+            });
+        }
+
+        View btnCenterInside = findViewById(
+                getResources().getIdentifier("btnWallpaperCenterInside", "id", getPackageName()));
+        if (btnCenterInside != null) {
+            btnCenterInside.setOnClickListener(v -> {
+                WallpaperManager.setScaleType(this, WallpaperDrawable.ScaleType.CENTER_INSIDE);
+                android.widget.Toast.makeText(this, "Mode: Ajustement centré", android.widget.Toast.LENGTH_SHORT)
+                        .show();
+                recreate();
+            });
+        }
+
+        View btnFitXY = findViewById(getResources().getIdentifier("btnWallpaperFitXY", "id", getPackageName()));
+        if (btnFitXY != null) {
+            btnFitXY.setOnClickListener(v -> {
+                WallpaperManager.setScaleType(this, WallpaperDrawable.ScaleType.FIT_XY);
+                android.widget.Toast.makeText(this, "Mode: Étirement complet", android.widget.Toast.LENGTH_SHORT)
+                        .show();
+                recreate();
+            });
+        }
+    }
+
+    private class HiddenAppAdapter
+            extends androidx.recyclerview.widget.RecyclerView.Adapter<HiddenAppAdapter.ViewHolder> {
+        private List<AppInfo> apps;
+        private BottomSheetDialog dialog;
+
+        public HiddenAppAdapter(List<AppInfo> apps, BottomSheetDialog dialog) {
+            this.apps = apps;
+            this.dialog = dialog;
+        }
+
+        @androidx.annotation.NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@androidx.annotation.NonNull android.view.ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_app, parent, false);
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(@androidx.annotation.NonNull ViewHolder holder, int position) {
+            AppInfo app = apps.get(position);
+            holder.text.setText(app.getLabel());
+            holder.icon.setImageDrawable(app.getIcon());
+            holder.itemView.setOnClickListener(v -> {
+                app.setHidden(false);
+                // Save immediately
+                android.content.pm.PackageManager pm = getPackageManager();
+                AppLayoutManager.SavedLayout layout = AppLayoutManager.loadLayout(SettingsActivity.this, pm);
+                if (layout != null) {
+                    // Find and update in layout
+                    for (AppInfo a : layout.gridApps) {
+                        if (a.getPackageName().equals(app.getPackageName()))
+                            a.setHidden(false);
+                    }
+                    for (AppInfo a : layout.dockApps) {
+                        if (a.getPackageName().equals(app.getPackageName()))
+                            a.setHidden(false);
+                    }
+                    AppLayoutManager.saveLayout(SettingsActivity.this, layout.gridApps, layout.dockApps);
+                }
+
+                android.widget.Toast.makeText(SettingsActivity.this, app.getLabel() + " restaurée",
+                        android.widget.Toast.LENGTH_SHORT).show();
+                apps.remove(position);
+                if (apps.isEmpty()) {
+                    dialog.dismiss();
+                } else {
+                    notifyItemRemoved(position);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return apps.size();
+        }
+
+        class ViewHolder extends androidx.recyclerview.widget.RecyclerView.ViewHolder {
+            ImageView icon;
+            TextView text;
+
+            public ViewHolder(@androidx.annotation.NonNull View itemView) {
+                super(itemView);
+                icon = itemView.findViewById(R.id.imgIcon);
+                text = itemView.findViewById(R.id.tvLabel);
+            }
+        }
+    }
+
+    private void showHiddenAppsDialog() {
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_recent_apps, null); // Reuse recents layout for
+                                                                                          // list
+        dialog.setContentView(view);
+
+        TextView title = view.findViewById(R.id.txtRecentAppsTitle);
+        if (title != null)
+            title.setText("Restaurer des applications");
+
+        androidx.recyclerview.widget.RecyclerView recycler = view.findViewById(R.id.recyclerRecentApps);
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+
+        // Load layout to find hidden apps
+        android.content.pm.PackageManager pm = getPackageManager();
+        AppLayoutManager.SavedLayout layout = AppLayoutManager.loadLayout(this, pm);
+
+        if (layout == null) {
+            android.widget.Toast.makeText(this, "Aucune application masquée", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<AppInfo> hiddenApps = new ArrayList<>();
+        // Check grid
+        for (AppInfo app : layout.gridApps) {
+            if (app.isHidden())
+                hiddenApps.add(app);
+        }
+        // Check dock
+        for (AppInfo app : layout.dockApps) {
+            if (app.isHidden())
+                hiddenApps.add(app);
+        }
+
+        if (hiddenApps.isEmpty()) {
+            android.widget.Toast.makeText(this, "Aucune application masquée", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Use custom HiddenAppAdapter for unhiding
+        HiddenAppAdapter adapter = new HiddenAppAdapter(hiddenApps, dialog);
+        recycler.setAdapter(adapter);
+
+        dialog.show();
+    }
+}

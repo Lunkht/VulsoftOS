@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorAccent">#2196F3</color>
+    
+<!--
+    <color name="glass_surface">#22FFFFFF</color>
+    <color name="glass_surface_elevated">#33FFFFFF</color>
+    <color name="glass_border">#44FFFFFF</color>
+    <color name="glass_accent">#55FFFFFF</color>
+
+    <color name="widget_glass">#22FFFFFF</color>
+    <color name="widget_green">#FF4CAF50</color>
+    <color name="widget_red">#FFF44336</color>
+    <color name="widget_orange">#FFFFA500</color>
+
+    <color name="oneui_blue_primary">#FF2196F3</color>
+    <color name="oneui_background_dark">#121212</color>
+    <color name="oneui_surface_dark">#1E1E1E</color>
+
+    <color name="shmo_primary">#FF6200EE</color>
+    <color name="shmo_background">#FF121212</color>
+    <color name="shmo_neon_cyan">#00FFFF</color>
+    <color name="shmo_neon_magenta">#FF00FF</color>
+    <color name="shmo_black">#000000</color>
+    <color name="shmo_neon_lime">#39FF14</color>
+
+    <color name="glass_primary">#80FFFFFF</color>
+    <color name="glass_background">@android:color/transparent</color>
+    -->
+
+
+
+    <!-- One UI Dark Theme Colors -->
+    <color name="oneui_blue_primary">#2196F3</color>
+    <color name="oneui_background_dark">#121212</color>
+    <color name="oneui_surface_dark">#2C2C2C</color>
+
+    <!-- SHMO (Amoled) Theme Colors -->
+    <color name="shmo_primary">#39FF14</color>
+    <color name="shmo_background">#FF000000</color>
+    <color name="shmo_black">#FF000000</color>
+    <color name="shmo_neon_cyan">#00FFFF</color>
+    <color name="shmo_neon_magenta">#FF00FF</color>
+    <color name="shmo_neon_lime">#39FF14</color>
+    <color name="shmo_squircle_bg">#FF000000</color>
+    
+    <!-- Night Mode Colors (Deep Blue/Grey) -->
+    <color name="night_background">#0D1117</color>
+    <color name="night_surface">#161B22</color>
+    <color name="night_accent">#58A6FF</color>
+
+    <!-- Glass Theme Colors -->
+    <color name="glass_surface">#801E1E1E</color> <!-- 50% dark -->
+    <color name="glass_surface_elevated">#D91E1E1E</color> <!-- 85% dark -->
+    <color name="glass_border">#33FFFFFF</color> <!-- 20% white -->
+    <color name="glass_primary">#3D3D43</color> <!-- Indigo -->
+    <color name="glass_accent">#EC4899</color> <!-- Pink -->
+    <color name="glass_background">#1A1A2E</color> <!-- Dark blue-grey -->
+
+    <!-- Widget Theme Colors -->
+    <color name="widget_red">#FF5722</color>
+    <color name="widget_green">#4CAF50</color>
+    <color name="widget_orange">#FF9800</color>
+    <color name="widget_glass">#6366F1</color>
+</resources>

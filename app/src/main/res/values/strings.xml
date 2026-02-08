@@ -1,0 +1,141 @@
+<resources>
+    <string name="app_name">Vulsoft OS</string>
+    <string name="title_settings">Paramètres</string>
+    <string name="clear_dock">Réinitialiser le dock</string>
+    <string name="show_dock">Afficher le dock</string>
+    <string name="columns_per_row">Colonnes par ligne</string>
+
+    <string name="switch_theme">Switch Theme</string>
+    <string name="theme_default">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_blue">(Amoled)</string>
+
+    <string name="settings_dark_mode">Dark</string>
+    <string name="settings_light_mode">Light</string>
+    <string name="settings_system_mode">System</string>
+
+    <!-- System Integration -->
+    <string name="settings">Paramètres</string>
+    <string name="launcher_settings">Paramètres du Launcher</string>
+    <string name="wallpaper">Fond d\'écran</string>
+    <string name="change_wallpaper">Changer le fond d\'écran</string>
+    <string name="system_integration">Intégration Système</string>
+    <string name="default_launcher">Launcher par défaut</string>
+    <string name="notification_access">Accès aux notifications</string>
+    <string name="system_permissions">Permissions système</string>
+    <string name="integration_complete">Intégration système complète</string>
+    <string name="integration_incomplete">Intégration système incomplète</string>
+
+    <!-- Permissions & Dialogs -->
+    <string name="permission_notification_title">Accès aux notifications</string>
+    <string name="permission_notification_msg">Vulsoft OS a besoin d\'accéder aux notifications pour afficher les badges sur les icônes.</string>
+    <string name="permission_button_allow">Autoriser</string>
+    <string name="permission_button_later">Plus tard</string>
+    <string name="toast_set_default_launcher">Définissez Vulsoft OS comme launcher par défaut pour activer le geste Home.</string>
+    <string name="permission_usage_title">Permission requise</string>
+    <string name="permission_usage_msg">Pour afficher les applications récentes, Vulsoft OS a besoin d\'accéder aux statistiques d\'utilisation.</string>
+    <string name="permission_button_grant">Accorder</string>
+    <string name="permission_button_cancel">Annuler</string>
+    
+    <!-- Settings & Backup -->
+    <string name="backup_success">Sauvegarde réussie</string>
+    <string name="backup_error">Erreur: </string>
+    <string name="restore_success">Restauration réussie</string>
+    <string name="wallpaper_applied">Fond d\'écran appliqué</string>
+    
+    <!-- Customization -->
+    <string name="text_size">Taille du texte</string>
+    <string name="icon_size">Taille des icônes</string>
+    <string name="language">Langue</string>
+    <string name="language_fr">Français</string>
+    <string name="language_en">English</string>
+    <string name="language_zh">中文</string>
+    
+    <!-- Menu & Messages -->
+    <string name="menu_app_info">Infos sur l\'appli</string>
+    <string name="menu_hide">Masquer</string>
+    <string name="menu_organize">Organiser</string>
+    <string name="menu_uninstall">Désinstaller</string>
+    <string name="msg_edit_mode">Mode organisation activé. Touchez pour déplacer. \nAppuyez sur Retour pour quitter.</string>
+    <string name="msg_edit_mode_end">Mode organisation terminé</string>
+    <string name="msg_app_hidden">Application masquée</string>
+
+    <!-- Lock Screen Customization removed -->
+
+    <!-- Gestures -->
+    <string name="gestures_title">Gestes</string>
+    <string name="gesture_swipe_up">Balayage vers le haut</string>
+    <string name="gesture_swipe_down">Balayage vers le bas</string>
+    <string name="gesture_double_tap">Double tap</string>
+    <string name="gesture_two_finger_swipe">Balayage à deux doigts</string>
+
+    <string name="action_none">Aucune action</string>
+    <string name="action_notifications">Notifications</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_wallpaper">Changer fond d\'écran</string>
+    <string name="action_assistant">Assistant</string>
+    <string name="action_app_search">Recherche</string>
+
+    <!-- Zen Mode -->
+    <string name="zen_mode_title">Mode Zen (Focus)</string>
+    <string name="zen_mode_desc">Passer l\'interface en noir et blanc pour réduire les distractions</string>
+
+    <!-- FAQ Activity -->
+    <string name="faq_title">FAQ / Aide</string>
+    <string name="faq_integration_status_title">Statut d\'Intégration Système</string>
+    <string name="faq_integration_checking">Vérification en cours...</string>
+    
+    <string name="faq_section_installation">Installation et Configuration</string>
+    <string name="faq_q1">Comment définir ValkuntOS comme launcher par défaut ?</string>
+    <string name="faq_a1">1. Allez dans Paramètres → \'Définir comme launcher par défaut\'\n2. Ou allez dans Paramètres Android → Applications → Applications par défaut → Launcher\n3. Sélectionnez Vulsoft OS dans la liste</string>
+    <string name="faq_btn_system_settings">Ouvrir les paramètres système</string>
+
+    <!-- Quick Settings Tiles -->
+    <string name="screen_recorder_title">Enregistreur</string>
+    <string name="faq_q2">Pourquoi Vulsoft OS demande-t-il des permissions ?</string>
+    <string name="faq_a2">• Accès aux notifications : Pour afficher les badges de notification\n• Modifier les paramètres : Pour changer les fonds d\'écran\n• Affichage par-dessus : Pour les widgets et overlays\n• Démarrage automatique : Pour s\'activer au boot</string>
+    <string name="faq_btn_notification">Configurer l\'accès aux notifications</string>
+    
+    <string name="faq_section_customization">Personnalisation</string>
+    <string name="faq_q3">Comment changer le thème ?</string>
+    <string name="faq_a3">Allez dans Paramètres et choisissez parmi :\n• Dark : Thème sombre élégant\n• Amoled : Noir pur avec couleurs néon\n• System : S\'adapte aux paramètres système\n• Glass : Effet glassmorphism moderne</string>
+    
+    <string name="faq_q4">Comment personnaliser les widgets ?</string>
+    <string name="faq_a4">1. Allez dans Paramètres → \'Modifier les widgets\'\n2. Déplacez les widgets en les glissant\n3. Redimensionnez avec les poignées\n4. Changez les couleurs dans les paramètres\n5. Appuyez sur Retour pour quitter le mode édition</string>
+    
+    <string name="faq_q5">Quelles couleurs sont disponibles pour les widgets ?</string>
+    <string name="faq_a5">6 couleurs disponibles :\n• Blanc et Noir (classiques)\n• Glass (bleu indigo)\n• Rouge, Vert, Orange (couleurs vives)</string>
+    
+    <string name="faq_section_apps">Gestion des Applications</string>
+    <string name="faq_q6">Comment réorganiser les applications ?</string>
+    <string name="faq_a6">• Maintenez le doigt sur une icône pour la déplacer\n• Glissez vers le dock pour l\'épingler\n• Utilisez \'Réorganiser\' dans les paramètres pour réinitialiser\n• Créez des dossiers en superposant les applications</string>
+    
+    <string name="faq_q7">Comment gérer le dock ?</string>
+    <string name="faq_a7">• Glissez une app vers le dock pour l\'ajouter\n• Maintenez une app du dock pour la retirer\n• Maximum 4 applications dans le dock\n• Activez/désactivez l\'arrière-plan dans les paramètres</string>
+    
+    <string name="faq_section_advanced">Fonctionnalités Avancées</string>
+    <string name="faq_q8">Comment utiliser la recherche ?</string>
+    <string name="faq_a8">• Tapez dans la barre de recherche en haut\n• Les résultats s\'affichent en temps réel\n• Appuyez sur Entrée pour lancer la première app\n• Effacez pour revenir à la vue normale</string>
+    
+    <string name="faq_q9">Quels gestes sont disponibles ?</string>
+    <string name="faq_a9">• Double-clic (vide) : Ouvrir l\'Assistant IA\n• Appui long (vide) : Voir applications récentes\n• Appui long (icône) : Menu / Mode Édition\n• Glisser une app : Déplacer ou supprimer</string>
+    
+    <string name="faq_q10">Comment utiliser l\'Assistant ?</string>
+    <string name="faq_a10">Double-cliquez n\'importe où sur l\'écran d\'accueil pour lancer l\'Assistant. Il peut ouvrir des applications, vous donner l\'heure, la date, et plus encore. Vous pouvez aussi l\'ouvrir depuis les Paramètres.</string>
+    
+    <string name="faq_q11">Comment voir les applications récentes ?</string>
+    <string name="faq_a11">Appuyez longuement sur un espace vide. Une fenêtre apparaîtra avec vos applications récentes et une barre de recherche rapide.</string>
+    
+    <string name="faq_section_troubleshooting">Dépannage</string>
+    <string name="faq_q12">Le launcher est lent, que faire ?</string>
+    <string name="faq_a12">• Redémarrez l\'application\n• Vérifiez les permissions système\n• Réduisez les effets de flou dans les paramètres\n• Libérez de la mémoire en fermant d\'autres apps\n• Réinitialisez la disposition des apps si nécessaire</string>
+    
+    <string name="faq_q13">J\'ai trouvé un bug, comment le signaler ?</string>
+    <string name="faq_a13">• Notez les étapes pour reproduire le problème\n• Vérifiez votre version d\'Android\n• Essayez de redémarrer l\'application\n• Contactez le support avec une description détaillée</string>
+    
+    <string name="faq_q14">Comment réinitialiser ValkuntOS ?</string>
+    <string name="faq_a14">• Paramètres → \'Réorganiser les applications\'\n• Ou allez dans Paramètres Android → Applications → ValkuntOS → Stockage → Effacer les données\n• Cela restaurera tous les paramètres par défaut</string>
+    
+    <string name="faq_section_about">À propos</string>
+    <string name="faq_about_desc">Vulsoft OS est un launcher Android moderne avec des fonctionnalités avancées de personnalisation, une intégration système profonde et une interface utilisateur élégante.</string>
+</resources>

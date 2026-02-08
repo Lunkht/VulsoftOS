@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:background="@drawable/rounded_background_dark"
+    android:padding="8dp"
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/btn_record"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/rec"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:contentDescription="Record"
+        app:tint="#FF0000" />
+    <ImageView
+        android:id="@+id/btn_sound_on"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/microphone"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:contentDescription="Sound On"
+        app:tint="#FFFFFF" />
+    <ImageView
+        android:id="@+id/btn_sound_off"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/microphone_off"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:contentDescription="Sound Off"
+        android:visibility="gone"
+        app:tint="#AAAAAA" />
+
+    <TextView
+        android:id="@+id/timer_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/btn_pause"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_media_pause"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:contentDescription="Pause"
+        android:visibility="gone"
+        app:tint="#FFFFFF" />
+
+    <ImageView
+        android:id="@+id/btn_stop"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/stop"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:contentDescription="Stop"
+        android:visibility="gone"
+        app:tint="#FFFFFF" />
+        
+    <ImageView
+        android:id="@+id/btn_close_overlay"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_close"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="6dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="Close Overlay"
+        app:tint="#AAAAAA" />
+
+</LinearLayout>

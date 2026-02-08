@@ -1,0 +1,227 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Ruvolute" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!--new themes-->
+        <!-- <item name="android:windowBackground">@color/oneui_background_dark</item> Removed to allow wallpaper -->
+        <item name="colorSurface">@color/oneui_surface_dark</item>
+        <item name="colorSurfaceVariant">#616161</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">#BDBDBD</item>
+
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+
+        <item name="colorSquircle">#CC2C2C2C</item>
+        <item name="settingsBackground">@color/oneui_background_dark</item>
+    </style>
+
+    <style name="Theme.Ruvolute" parent="Base.Theme.Ruvolute" />
+    
+    <!-- Theme: Day/Night (System Default) -->
+    <style name="Theme.Ruvolute.DayNight" parent="Base.Theme.Ruvolute">
+         <item name="settingsBackground">@color/white</item>
+         <item name="android:windowShowWallpaper">false</item>
+         <item name="android:windowBackground">@color/white</item>
+         <item name="android:statusBarColor">@color/white</item>
+         <item name="android:navigationBarColor">@color/white</item>
+         <item name="android:windowLightStatusBar">true</item>
+         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+         <item name="colorSurface">#F5F5F5</item>
+         <item name="colorOnSurface">@color/black</item>
+         <item name="android:textColorPrimary">@color/black</item>
+         <item name="android:textColorSecondary">#757575</item>
+    </style>
+
+    <!-- Theme: Light (Forced) -->
+    <style name="Theme.Ruvolute.Light" parent="Base.Theme.Ruvolute">
+         <item name="settingsBackground">@color/white</item>
+         <item name="android:windowShowWallpaper">false</item>
+         <item name="android:windowBackground">@color/white</item>
+         <item name="android:statusBarColor">@color/white</item>
+         <item name="android:navigationBarColor">@color/white</item>
+         <item name="android:windowLightStatusBar">true</item>
+         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+         <item name="colorSurface">#F5F5F5</item>
+         <item name="colorOnSurface">@color/black</item>
+         <item name="android:textColorPrimary">@color/black</item>
+         <item name="android:textColorSecondary">#757575</item>
+    </style>
+
+    <!-- Theme: Dark -->
+    <style name="Theme.Ruvolute.Dark" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowShowWallpaper">false</item>
+        <item name="android:windowBackground">@color/oneui_background_dark</item>
+        <item name="android:statusBarColor">@color/oneui_background_dark</item>
+        <item name="android:navigationBarColor">@color/oneui_background_dark</item>
+        <item name="settingsBackground">@color/oneui_background_dark</item>
+        <item name="colorSurface">@color/oneui_surface_dark</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+    </style>
+
+    <!-- Theme: SHMO (High Contrast / Custom) -->
+    <style name="Theme.Ruvolute.SHMO" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/shmo_primary</item>
+        <item name="android:windowShowWallpaper">false</item>
+        <item name="android:windowBackground">@color/shmo_background</item>
+        <item name="android:statusBarColor">@color/shmo_background</item>
+        <item name="android:navigationBarColor">@color/shmo_background</item>
+        <item name="android:textColorPrimary">@color/shmo_neon_lime</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">@color/shmo_neon_lime</item>
+        <item name="settingsBackground">@color/black</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+    </style>
+
+    <!-- Theme: Liquid Glass -->
+    <style name="Theme.Ruvolute.LiquidGlass" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowShowWallpaper">false</item>
+        <item name="android:windowBackground">@color/glass_background</item>
+        <item name="android:statusBarColor">@color/glass_background</item>
+        <item name="android:navigationBarColor">@color/glass_background</item>
+        <item name="colorSurface">@color/glass_surface</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="settingsBackground">@color/glass_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+    </style>
+
+    <!-- LAUNCHER VARIANTS (Transparent Backgrounds) -->
+    <style name="Theme.Ruvolute.Launcher.Dark" parent="Theme.Ruvolute.Dark">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.Ruvolute.Launcher.DayNight" parent="Theme.Ruvolute.DayNight">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.Ruvolute.Launcher.Light" parent="Theme.Ruvolute.Light">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.Ruvolute.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Ruvolute.Launcher.SHMO" parent="Theme.Ruvolute.SHMO">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.Ruvolute.Launcher.LiquidGlass" parent="Theme.Ruvolute.LiquidGlass">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <!-- SHMO (Amoled) Theme -->
+    <style name="Theme.ValkuntOS.Amoled" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/shmo_neon_cyan</item>
+        <item name="colorPrimaryVariant">@color/shmo_neon_magenta</item>
+        <item name="colorOnPrimary">@color/black</item>
+
+        <item name="android:windowBackground">@color/shmo_black</item>
+        <item name="colorSurface">@color/shmo_black</item>
+        <item name="colorSurfaceVariant">#00AA00</item>
+        <item name="colorOnSurface">@color/shmo_neon_lime</item>
+        <item name="android:textColorPrimary">@color/shmo_neon_lime</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+
+        <item name="colorSquircle">#CC000000</item>
+    </style>
+
+    <!-- System Theme (DayNight) - Day Mode -->
+    <style name="Theme.ValkuntOS.System" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/oneui_blue_primary</item>
+        <item name="colorPrimaryVariant">@color/oneui_blue_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Light mode colors -->
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorSurfaceVariant">#E8E8E8</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">#757575</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+
+        <item name="colorSquircle">#CCFFFFFF</item>
+    </style>
+
+    <!-- Glass Theme (Glassmorphism) -->
+    <style name="Theme.ValkuntOS.Glass" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/glass_primary</item>
+        <item name="colorPrimaryVariant">@color/glass_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="android:windowBackground">@color/glass_background</item>
+        <item name="colorSurface">@color/glass_surface</item>
+        <item name="colorSurfaceVariant">#4D9D8D</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">#CCFFFFFF</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+
+        <item name="colorSquircle">@color/glass_surface_elevated</item>
+    </style>
+    <style name="TransparentBottomSheetDialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
+    </style>
+
+    <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="MenuOptionStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+</resources>

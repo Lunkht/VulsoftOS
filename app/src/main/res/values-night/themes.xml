@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Ruvolute" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+
+    <!-- Theme: Day/Night (System Default) - Night Mode -->
+    <style name="Theme.Ruvolute.DayNight" parent="Base.Theme.Ruvolute">
+         <item name="settingsBackground">@color/oneui_background_dark</item>
+         <item name="android:windowShowWallpaper">false</item>
+         <item name="android:windowBackground">@color/oneui_background_dark</item>
+         <item name="android:statusBarColor">@color/oneui_background_dark</item>
+         <item name="android:navigationBarColor">@color/oneui_background_dark</item>
+         <item name="colorOnSurface">@color/white</item>
+         <item name="android:textColorPrimary">@color/white</item>
+         <item name="android:windowLightStatusBar">false</item>
+         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+    </style>
+
+    <style name="Theme.Ruvolute.Launcher.DayNight" parent="Theme.Ruvolute.Launcher.Dark" />
+</resources>

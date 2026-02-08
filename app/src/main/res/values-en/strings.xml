@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Vulsoft OS</string>
+    <string name="title_settings">Settings</string>
+    <string name="clear_dock">Reset Dock</string>
+    <string name="show_dock">Show Dock</string>
+    <string name="columns_per_row">Columns per row</string>
+
+    <string name="switch_theme">Switch Theme</string>
+    <string name="theme_default">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_blue">(Amoled)</string>
+
+    <string name="settings_dark_mode">Dark</string>
+    <string name="settings_light_mode">Light</string>
+    <string name="settings_system_mode">System</string>
+
+    <!-- System Integration -->
+    <string name="settings">Settings</string>
+    <string name="launcher_settings">Launcher Settings</string>
+    <string name="wallpaper">Wallpaper</string>
+    <string name="change_wallpaper">Change Wallpaper</string>
+    <string name="system_integration">System Integration</string>
+    <string name="default_launcher">Default Launcher</string>
+    <string name="notification_access">Notification Access</string>
+    <string name="system_permissions">System Permissions</string>
+    <string name="integration_complete">System integration complete</string>
+    <string name="integration_incomplete">System integration incomplete</string>
+
+    <!-- Permissions & Dialogs -->
+    <string name="permission_notification_title">Notification Access</string>
+    <string name="permission_notification_msg">Vulsoft OS needs access to notifications to display badges on icons.</string>
+    <string name="permission_button_allow">Allow</string>
+    <string name="permission_button_later">Later</string>
+    <string name="toast_set_default_launcher">Set Vulsoft OS as default launcher to enable Home gesture.</string>
+    <string name="permission_usage_title">Permission Required</string>
+    <string name="permission_usage_msg">To display recent apps, Vulsoft OS needs access to usage statistics.</string>
+    <string name="permission_button_grant">Grant</string>
+    <string name="permission_button_cancel">Cancel</string>
+    
+    <!-- Settings & Backup -->
+    <string name="backup_success">Backup successful</string>
+    <string name="backup_error">Error: </string>
+    <string name="restore_success">Restore successful</string>
+    <string name="wallpaper_applied">Wallpaper applied</string>
+    
+    <!-- Customization -->
+    <string name="text_size">Text Size</string>
+    <string name="icon_size">Icon Size</string>
+    <string name="language">Language</string>
+    <string name="language_fr">Français</string>
+    <string name="language_en">English</string>
+    <string name="language_zh">中文</string>
+    
+    <!-- Menu & Messages -->
+    <string name="menu_app_info">App Info</string>
+    <string name="menu_hide">Hide</string>
+    <string name="menu_organize">Organize</string>
+    <string name="menu_uninstall">Uninstall</string>
+    <string name="msg_edit_mode">Organization mode enabled. Touch to move. \nPress Back to exit.</string>
+    <string name="msg_edit_mode_end">Organization mode ended</string>
+    <string name="msg_app_hidden">App hidden</string>
+</resources>

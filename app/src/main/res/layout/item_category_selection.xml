@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textCategory"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="16dp"
+    android:textColor="?attr/colorOnSurface"
+    android:textSize="16sp"
+    android:background="@drawable/bg_squircle_glass"
+    android:layout_margin="8dp" />
