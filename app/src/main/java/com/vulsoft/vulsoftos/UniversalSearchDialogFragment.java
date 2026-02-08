@@ -106,6 +106,7 @@ public class UniversalSearchDialogFragment extends DialogFragment {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             dialog.getWindow().setLayout(width, height);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
@@ -238,7 +239,11 @@ public class UniversalSearchDialogFragment extends DialogFragment {
             if (item.type == SearchResultItem.Type.APP) {
                 holder.icon.setImageDrawable(item.icon);
             } else if (item.type == SearchResultItem.Type.CONTACT) {
-                holder.icon.setImageDrawable(IconPackManager.loadSafeDrawable(holder.itemView.getContext(), R.drawable.afro_contact));
+                if (item.icon != null) {
+                    holder.icon.setImageDrawable(item.icon);
+                } else {
+                    holder.icon.setImageDrawable(IconPackManager.loadSafeDrawable(holder.itemView.getContext(), R.drawable.afro_contact));
+                }
             } else if (item.type == SearchResultItem.Type.WEB) {
                 holder.icon.setImageDrawable(androidx.core.content.ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.ic_web_search));
             }

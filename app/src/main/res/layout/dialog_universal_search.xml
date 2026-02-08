@@ -1,31 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/colorSurface"
-    android:padding="16dp">
+    android:background="@android:color/transparent">
 
-    <EditText
-        android:id="@+id/editSearch"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Rechercher (Apps, Contacts...)"
-        android:inputType="text"
-        android:imeOptions="actionSearch"
-        android:maxLines="1"
-        android:background="@drawable/search_bg"
-        android:padding="12dp"
-        android:drawableStart="@drawable/search"
-        android:drawablePadding="8dp"
-        android:textColor="?attr/colorOnSurface"
-        android:textColorHint="?attr/colorSurfaceVariant"/>
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_dialog_modern"
+        android:padding="24dp"
+        android:elevation="8dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerSearchResults"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="16dp"/>
+        <EditText
+            android:id="@+id/editSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Rechercher (Apps, Contacts...)"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:background="@drawable/search_bg"
+            android:padding="12dp"
+            android:drawableStart="@drawable/search"
+            android:drawablePadding="8dp"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorSurfaceVariant"/>
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSearchResults"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
+</FrameLayout>
