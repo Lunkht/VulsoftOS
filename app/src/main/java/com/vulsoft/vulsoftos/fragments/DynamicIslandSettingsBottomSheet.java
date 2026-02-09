@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -25,6 +27,21 @@ public class DynamicIslandSettingsBottomSheet extends BottomSheetDialogFragment 
     private LinearLayout styleStandard, styleGlassDark, styleGlassBlur, styleLiquidBlue;
     private android.widget.SeekBar seekDuration, seekYOffset;
     private android.widget.TextView lblDurationValue, lblYOffsetValue;
+
+    private final ActivityResultLauncher<Intent> overlayPermissionLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (android.provider.Settings.canDrawOverlays(requireContext())) {
+                            prefs.edit().putBoolean("dynamic_island_enabled", true).apply();
+                            switchEnable.setChecked(true);
+                            requireContext().startForegroundService(new Intent(requireContext(), DynamicIslandService.class));
+                        } else {
+                            switchEnable.setChecked(false);
+                            Toast.makeText(getContext(), "Permission refusée", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
 
     @Nullable
     @Override
@@ -69,10 +86,20 @@ public class DynamicIslandSettingsBottomSheet extends BottomSheetDialogFragment 
         boolean isEnabled = prefs.getBoolean("dynamic_island_enabled", false);
         switchEnable.setChecked(isEnabled);
         switchEnable.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.edit().putBoolean("dynamic_island_enabled", isChecked).apply();
             if (isChecked) {
-                requireContext().startService(new Intent(requireContext(), DynamicIslandService.class));
+                if (android.provider.Settings.canDrawOverlays(requireContext())) {
+                    prefs.edit().putBoolean("dynamic_island_enabled", true).apply();
+                    requireContext().startForegroundService(new Intent(requireContext(), DynamicIslandService.class));
+                } else {
+                    buttonView.setChecked(false); // Reset switch until permission granted
+                    Intent intent = new Intent(
+                            android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            android.net.Uri.parse("package:" + requireContext().getPackageName()));
+                    overlayPermissionLauncher.launch(intent);
+                    Toast.makeText(getContext(), "Veuillez accorder la permission de superposition", Toast.LENGTH_LONG).show();
+                }
             } else {
+                prefs.edit().putBoolean("dynamic_island_enabled", false).apply();
                 requireContext().stopService(new Intent(requireContext(), DynamicIslandService.class));
             }
         });

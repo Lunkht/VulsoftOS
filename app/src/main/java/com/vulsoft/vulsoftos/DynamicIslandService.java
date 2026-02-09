@@ -284,8 +284,8 @@ public class DynamicIslandService extends Service {
         int yOffsetPx = dpToPx(yOffsetDp);
 
         IslandDimensions d = new IslandDimensions();
-        
-        // Hide in landscape if enabled
+
+        // Hide in landscape if enabled (user explicitly requested hiding)
         if (hideInLandscape && (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270)) {
             d.width = 0;
             d.height = 0;
@@ -295,14 +295,20 @@ public class DynamicIslandService extends Service {
             return d;
         }
 
-        // Standard Landscape Mode: Display at Top Center (Visual Top)
-        // This keeps the notification "vertical" (upright) relative to the user
-        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
-            d.width = dpToPx(120);
-            d.height = dpToPx(36);
-            d.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-            d.x = 0;
-            d.y = dpToPx(6) + yOffsetPx;
+        if (rotation == Surface.ROTATION_90) {
+            // Landscape, Notch on Left
+            d.width = dpToPx(36);
+            d.height = dpToPx(120);
+            d.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
+            d.x = dpToPx(6) + yOffsetPx;
+            d.y = 0;
+        } else if (rotation == Surface.ROTATION_270) {
+            // Landscape, Notch on Right
+            d.width = dpToPx(36);
+            d.height = dpToPx(120);
+            d.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+            d.x = dpToPx(6) + yOffsetPx;
+            d.y = 0;
         } else {
             // Portrait (0 or 180)
             d.width = dpToPx(120);
@@ -360,6 +366,12 @@ public class DynamicIslandService extends Service {
         
         // Don't expand if hidden (width=0)
         if (dims.width == 0) return;
+
+        // In Landscape, if we can't show it vertically, we don't show the notification expansion at all.
+        // This avoids the horizontal bar obstruction.
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            return;
+        }
 
         int targetY = dims.y;
         if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) {
@@ -447,6 +459,12 @@ public class DynamicIslandService extends Service {
         
         // Don't expand if hidden (width=0)
         if (dims.width == 0) return;
+
+        // In Landscape, if we can't show it vertically, we don't show the notification expansion at all.
+        // This avoids the horizontal bar obstruction.
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            return;
+        }
 
         int targetY = dims.y;
         if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) {

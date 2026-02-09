@@ -1034,22 +1034,65 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         }
         
         // Gestion de la barre de recherche
-        if (searchBar != null) {
+        if (searchBar != null && viewPagerApps != null && recyclerAppsList != null) {
+            androidx.constraintlayout.widget.ConstraintLayout.LayoutParams searchParams = 
+                (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) searchBar.getLayoutParams();
+            
+            androidx.constraintlayout.widget.ConstraintLayout.LayoutParams pagerParams = 
+                (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) viewPagerApps.getLayoutParams();
+            
+            androidx.constraintlayout.widget.ConstraintLayout.LayoutParams listParams = 
+                (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams) recyclerAppsList.getLayoutParams();
+
+            int topMarginApps = (int) (30 * getResources().getDisplayMetrics().density);
+
             if (showSearchBar) {
                 searchBar.setVisibility(View.VISIBLE);
-                // Positionner en haut ou en bas selon la préférence
-                android.view.ViewGroup.MarginLayoutParams params = 
-                    (android.view.ViewGroup.MarginLayoutParams) searchBar.getLayoutParams();
+                
                 if (searchBarTop) {
                     // Positionner en haut (après le notch)
-                    params.topMargin = (int) (16 * getResources().getDisplayMetrics().density);
-                    params.bottomMargin = 0;
+                    searchParams.topMargin = (int) (48 * getResources().getDisplayMetrics().density); // Plus de marge pour le notch
+                    searchParams.bottomMargin = 0;
+                    
+                    // Clear Bottom constraint, Set Top constraint
+                    searchParams.bottomToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+                    searchParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+                    
+                    // Adjust Apps Container (ViewPager/Recycler) to be below SearchBar
+                    pagerParams.topToBottom = R.id.searchBar;
+                    pagerParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+                    pagerParams.bottomToTop = R.id.layoutPageIndicator; // Extend to bottom (above indicator)
+                    pagerParams.topMargin = topMarginApps;
+                    
+                    listParams.topToBottom = R.id.searchBar;
+                    listParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+                    listParams.bottomToTop = R.id.layoutPageIndicator;
+                    listParams.topMargin = topMarginApps;
+
                 } else {
-                    // Positionner en bas (au-dessus du dock)
-                    params.topMargin = 0;
-                    params.bottomMargin = (int) (16 * getResources().getDisplayMetrics().density);
+                    // Positionner en bas (au-dessus du dock/indicator)
+                    searchParams.topMargin = 0;
+                    searchParams.bottomMargin = (int) (16 * getResources().getDisplayMetrics().density);
+                    
+                    // Clear Top constraint, Set Bottom constraint
+                    searchParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+                    searchParams.bottomToTop = R.id.layoutPageIndicator;
+                    
+                    // Adjust Apps Container (ViewPager/Recycler) to be above SearchBar
+                    pagerParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+                    pagerParams.topToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+                    pagerParams.bottomToTop = R.id.searchBar;
+                    pagerParams.topMargin = topMarginApps + (int) (24 * getResources().getDisplayMetrics().density); // Add extra for status bar
+                    
+                    listParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+                    listParams.topToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+                    listParams.bottomToTop = R.id.searchBar;
+                    listParams.topMargin = topMarginApps + (int) (24 * getResources().getDisplayMetrics().density);
                 }
-                searchBar.setLayoutParams(params);
+                
+                searchBar.setLayoutParams(searchParams);
+                viewPagerApps.setLayoutParams(pagerParams);
+                recyclerAppsList.setLayoutParams(listParams);
                 
                 // Appliquer le style
                 if ("glass".equals(searchBarStyle)) {
@@ -1065,6 +1108,20 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                 });
             } else {
                 searchBar.setVisibility(View.GONE);
+                
+                // Apps take full height (respecting indicators)
+                pagerParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+                pagerParams.topToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+                pagerParams.bottomToTop = R.id.layoutPageIndicator;
+                pagerParams.topMargin = topMarginApps + (int) (24 * getResources().getDisplayMetrics().density);
+
+                listParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID;
+                listParams.topToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET;
+                listParams.bottomToTop = R.id.layoutPageIndicator;
+                listParams.topMargin = topMarginApps + (int) (24 * getResources().getDisplayMetrics().density);
+                
+                viewPagerApps.setLayoutParams(pagerParams);
+                recyclerAppsList.setLayoutParams(listParams);
             }
         }
         

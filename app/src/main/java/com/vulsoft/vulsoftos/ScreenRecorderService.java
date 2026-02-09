@@ -46,6 +46,8 @@ public class ScreenRecorderService extends Service {
     public static final String ACTION_SHOW_CONTROLS = "com.vulsoft.vulsoftos.action.SHOW_CONTROLS";
     public static final String ACTION_START_RECORDING = "com.vulsoft.vulsoftos.action.START_RECORDING";
     public static final String ACTION_STOP_SERVICE = "com.vulsoft.vulsoftos.action.STOP_SERVICE";
+    public static final String ACTION_PAUSE_RECORDING = "com.vulsoft.vulsoftos.action.PAUSE_RECORDING";
+    public static final String ACTION_RESUME_RECORDING = "com.vulsoft.vulsoftos.action.RESUME_RECORDING";
     
     public static final String EXTRA_RESULT_CODE = "result_code";
     public static final String EXTRA_RESULT_DATA = "result_data";
@@ -163,11 +165,17 @@ public class ScreenRecorderService extends Service {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 Intent notificationIntent = new Intent(this, ScreenRecorderService.class);
                 PendingIntent pendingIntent = PendingIntent.getService(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+                
+                Intent stopIntent = new Intent(this, ScreenRecorderService.class);
+                stopIntent.setAction(ACTION_STOP_SERVICE);
+                PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE);
+
                 Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setContentTitle("Enregistrement en cours")
                         .setContentText("Appuyez pour arrêter")
                         .setSmallIcon(R.drawable.ic_launcher_foreground)
                         .setContentIntent(pendingIntent)
+                        .addAction(R.drawable.stop, "Arrêter", stopPendingIntent)
                         .setPriority(NotificationCompat.PRIORITY_LOW)
                         .build();
                         
@@ -182,20 +190,72 @@ public class ScreenRecorderService extends Service {
         } else if (ACTION_STOP_SERVICE.equals(action)) {
             stopRecording();
             stopSelf();
+        } else if (ACTION_PAUSE_RECORDING.equals(action)) {
+            pauseRecording();
+            updateNotification();
+        } else if (ACTION_RESUME_RECORDING.equals(action)) {
+            resumeRecording();
+            updateNotification();
         }
 
         return START_STICKY;
+    }
+
+    private void updateNotification() {
+        if (!isRecording && !isPaused) return; // Only update if active
+
+        Intent notificationIntent = new Intent(this, ScreenRecorderService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent stopIntent = new Intent(this, ScreenRecorderService.class);
+        stopIntent.setAction(ACTION_STOP_SERVICE);
+        PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Enregistrement d'écran")
+                .setContentText(isPaused ? "Enregistrement en pause" : "Enregistrement en cours")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setOngoing(true); // Prevent dismissal
+
+        // Add Pause/Resume Action
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (isPaused) {
+                Intent resumeIntent = new Intent(this, ScreenRecorderService.class);
+                resumeIntent.setAction(ACTION_RESUME_RECORDING);
+                PendingIntent resumePendingIntent = PendingIntent.getService(this, 0, resumeIntent, PendingIntent.FLAG_IMMUTABLE);
+                builder.addAction(android.R.drawable.ic_media_play, "Reprendre", resumePendingIntent);
+            } else {
+                Intent pauseIntent = new Intent(this, ScreenRecorderService.class);
+                pauseIntent.setAction(ACTION_PAUSE_RECORDING);
+                PendingIntent pausePendingIntent = PendingIntent.getService(this, 0, pauseIntent, PendingIntent.FLAG_IMMUTABLE);
+                builder.addAction(android.R.drawable.ic_media_pause, "Pause", pausePendingIntent);
+            }
+        }
+        
+        builder.addAction(R.drawable.stop, "Arrêter", stopPendingIntent);
+
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager != null) {
+            manager.notify(NOTIFICATION_ID, builder.build());
+        }
     }
 
     private void startForegroundService() {
         Intent notificationIntent = new Intent(this, ScreenRecorderService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
+        Intent stopIntent = new Intent(this, ScreenRecorderService.class);
+        stopIntent.setAction(ACTION_STOP_SERVICE);
+        PendingIntent stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE);
+
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Enregistrement d'écran")
                 .setContentText("Service d'enregistrement d'écran actif")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
+                .addAction(R.drawable.stop, "Arrêter", stopPendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .build();
 
@@ -538,7 +598,11 @@ public class ScreenRecorderService extends Service {
             btnStop.setVisibility(View.VISIBLE);
             btnClose.setVisibility(View.GONE);
             if (tvTimer != null) tvTimer.setVisibility(View.VISIBLE);
+            
+            // Initial notification update
+            updateNotification();
         } else {
+            floatingView.setVisibility(View.VISIBLE); // Ensure visible when stopped
             btnRecord.setVisibility(View.VISIBLE);
             btnPause.setVisibility(View.GONE);
             btnStop.setVisibility(View.GONE);

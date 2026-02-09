@@ -151,41 +151,7 @@ public class SettingsActivity extends BaseActivity {
             });
         }
         
-        // Dynamic Island Switch
-        com.google.android.material.switchmaterial.SwitchMaterial switchDynamicIsland = findViewById(R.id.switchDynamicIsland);
-        if (switchDynamicIsland != null) {
-            boolean isDynamicIslandEnabled = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getBoolean("dynamic_island_enabled", false);
-            switchDynamicIsland.setChecked(isDynamicIslandEnabled);
-            switchDynamicIsland.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    if (android.provider.Settings.canDrawOverlays(this)) {
-                        getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit().putBoolean("dynamic_island_enabled", true).apply();
-                        startForegroundService(new android.content.Intent(this, DynamicIslandService.class));
-                    } else {
-                        // Request Permission
-                        buttonView.setChecked(false); // Reset switch until permission granted
-                        android.content.Intent intent = new android.content.Intent(
-                                android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                android.net.Uri.parse("package:" + getPackageName()));
-                        startActivityForResult(intent, 1234);
-                        android.widget.Toast.makeText(this, "Veuillez accorder la permission de superposition", android.widget.Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit().putBoolean("dynamic_island_enabled", false).apply();
-                    stopService(new android.content.Intent(this, DynamicIslandService.class));
-                }
-            });
-        }
 
-        // Dynamic Island Style
-        LinearLayout btnDynamicIslandStyle = findViewById(R.id.btnDynamicIslandStyle);
-        TextView txtDynamicIslandStyle = findViewById(R.id.txtDynamicIslandStyle);
-        if (btnDynamicIslandStyle != null && txtDynamicIslandStyle != null) {
-             String currentStyle = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getString("dynamic_island_style", "default");
-             txtDynamicIslandStyle.setText(getDynamicIslandStyleName(currentStyle));
-             
-             btnDynamicIslandStyle.setOnClickListener(v -> showDynamicIslandStyleDialog(txtDynamicIslandStyle));
-        }
 
         LinearLayout btnUniversalSearchSettings = findViewById(R.id.btnUniversalSearchSettings);
         if (btnUniversalSearchSettings != null) {
@@ -199,12 +165,15 @@ public class SettingsActivity extends BaseActivity {
         if (radioSearchPosition != null) {
             SharedPreferences prefs = getSharedPreferences("launcher_prefs", MODE_PRIVATE);
             boolean searchBarTop = prefs.getBoolean("search_bar_top", false);
+            boolean showSearchBar = prefs.getBoolean("show_search_bar", false);
             
             if (searchBarTop) {
                 radioSearchPosition.check(R.id.radioSearchTop);
             } else {
                 radioSearchPosition.check(R.id.radioSearchBottom);
             }
+            
+            setRadioGroupEnabled(radioSearchPosition, showSearchBar);
             
             radioSearchPosition.setOnCheckedChangeListener((group, checkedId) -> {
                 boolean isTop = (checkedId == R.id.radioSearchTop);
@@ -366,6 +335,11 @@ public class SettingsActivity extends BaseActivity {
             switchSearchBar.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
                         .putBoolean("show_search_bar", isChecked).apply();
+                
+                android.widget.RadioGroup rg = findViewById(R.id.radioSearchPosition);
+                if (rg != null) {
+                    setRadioGroupEnabled(rg, isChecked);
+                }
             });
         }
 
@@ -420,20 +394,6 @@ public class SettingsActivity extends BaseActivity {
         if (btnGridSettings != null) {
             btnGridSettings.setOnClickListener(v -> {
                 new com.vulsoft.vulsoftos.fragments.GridSettingsBottomSheet().show(getSupportFragmentManager(), "GridSettings");
-            });
-        }
-
-        // Snap to Grid Switch
-        com.google.android.material.switchmaterial.SwitchMaterial switchSnapToGrid = findViewById(
-                R.id.switchSnapToGrid);
-        if (switchSnapToGrid != null) {
-            boolean isSnapToGridEnabled = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getBoolean(
-                    "snap_to_grid",
-                    true);
-            switchSnapToGrid.setChecked(isSnapToGridEnabled);
-            switchSnapToGrid.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit().putBoolean("snap_to_grid", isChecked)
-                        .apply();
             });
         }
 
@@ -1202,18 +1162,7 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1234) {
-            if (android.provider.Settings.canDrawOverlays(this)) {
-                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit().putBoolean("dynamic_island_enabled", true).apply();
-                startForegroundService(new android.content.Intent(this, DynamicIslandService.class));
-                com.google.android.material.switchmaterial.SwitchMaterial switchDynamicIsland = findViewById(R.id.switchDynamicIsland);
-                if (switchDynamicIsland != null) {
-                    switchDynamicIsland.setChecked(true);
-                }
-            } else {
-                android.widget.Toast.makeText(this, "Permission refusée", android.widget.Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == 1235) { // Screen Recorder Overlay Permission
+        if (requestCode == 1235) { // Screen Recorder Overlay Permission
              if (android.provider.Settings.canDrawOverlays(this)) {
                  startScreenRecorderService();
              } else {
@@ -1331,47 +1280,10 @@ public class SettingsActivity extends BaseActivity {
         dialog.show();
     }
 
-
-    private String getDynamicIslandStyleName(String style) {
-        switch (style) {
-            case "glass_dark": return "Verre Sombre";
-            case "glass_blur": return "Verre Flou";
-            case "liquid_blue": return "Liquide Bleu";
-            default: return "Par défaut (Noir)";
+    private void setRadioGroupEnabled(android.widget.RadioGroup radioGroup, boolean enabled) {
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
+            radioGroup.getChildAt(i).setEnabled(enabled);
         }
     }
 
-    private void showDynamicIslandStyleDialog(TextView statusView) {
-        final String[] options = { "Par défaut (Noir)", "Verre Sombre", "Verre Flou", "Liquide Bleu" };
-        final String[] values = { "default", "glass_dark", "glass_blur", "liquid_blue" };
-        
-        String current = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getString("dynamic_island_style", "default");
-        int checkedItem = 0;
-        for (int i = 0; i < values.length; i++) {
-            if (values[i].equals(current)) {
-                checkedItem = i;
-                break;
-            }
-        }
-        
-        new com.vulsoft.vulsoftos.utils.ModernDialogHelper.Builder(this)
-            .setTitle("Style Dynamic Island")
-            .setSingleChoiceItems(options, checkedItem, (index, value) -> {
-                String selected = values[index];
-                getSharedPreferences("launcher_prefs", MODE_PRIVATE).edit()
-                        .putString("dynamic_island_style", selected).apply();
-                statusView.setText(options[index]);
-                
-                // Restart service if enabled to apply changes
-                boolean isEnabled = getSharedPreferences("launcher_prefs", MODE_PRIVATE).getBoolean("dynamic_island_enabled", false);
-                if (isEnabled) {
-                    stopService(new android.content.Intent(this, DynamicIslandService.class));
-                    if (android.provider.Settings.canDrawOverlays(this)) {
-                         startForegroundService(new android.content.Intent(this, DynamicIslandService.class));
-                    }
-                }
-            })
-            .setNegativeButton("Annuler", null)
-            .show();
-    }
 }

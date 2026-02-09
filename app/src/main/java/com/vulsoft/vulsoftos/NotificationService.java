@@ -39,6 +39,24 @@ public class NotificationService extends NotificationListenerService {
             }
         }
         
+        // Filter out ongoing notifications (e.g. background services, downloads) to avoid constant popup
+        if (sbn.isOngoing()) {
+            return;
+        }
+
+        // Filter out low importance notifications (only show IMPORTANCE_DEFAULT (3) or higher)
+        try {
+            Ranking ranking = new Ranking();
+            RankingMap rankingMap = getCurrentRanking();
+            if (rankingMap != null && rankingMap.getRanking(sbn.getKey(), ranking)) {
+                 if (ranking.getImportance() < android.app.NotificationManager.IMPORTANCE_DEFAULT) {
+                     return;
+                 }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         String title = extras.getString(android.app.Notification.EXTRA_TITLE);
         CharSequence textCharSeq = extras.getCharSequence(android.app.Notification.EXTRA_TEXT);
         String text = textCharSeq != null ? textCharSeq.toString() : "";

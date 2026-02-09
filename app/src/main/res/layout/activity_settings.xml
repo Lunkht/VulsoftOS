@@ -235,22 +235,7 @@
                 android:textStyle="bold"
                 android:textAllCaps="true"
                 android:layout_marginBottom="8dp" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="12dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Dynamic Island"
-                    android:textColor="?attr/colorOnSurface" />
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchDynamicIsland"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -269,29 +254,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/btnDynamicIslandStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="12dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Style Dynamic Island"
-                    android:textColor="?attr/colorOnSurface" />
-                <TextView
-                    android:id="@+id/txtDynamicIslandStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Par défaut"
-                    android:textColor="?attr/colorSurfaceVariant" />
-            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/btnDynamicIslandSettings"
@@ -773,44 +736,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="52dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="12dp">
-                
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Position"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="14sp"
-                    android:alpha="0.7"/>
 
-                <RadioGroup
-                    android:id="@+id/radioSearchPosition"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/radioSearchBottom"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bas"
-                        android:textColor="?attr/colorOnSurface"
-                        android:layout_marginEnd="16dp"/>
-
-                    <RadioButton
-                        android:id="@+id/radioSearchTop"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Haut"
-                        android:textColor="?attr/colorOnSurface"/>
-                </RadioGroup>
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/btnGridSettings"
@@ -835,32 +761,6 @@
                     android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="12dp">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:background="@drawable/bg_settings_icon"
-                    android:src="@drawable/grid"
-                    app:tint="?attr/colorOnSurface" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Aligner sur la grille"
-                    android:textColor="?attr/colorOnSurface" />
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switchSnapToGrid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
