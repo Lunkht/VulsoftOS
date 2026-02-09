@@ -21,7 +21,7 @@ import com.vulsoft.vulsoftos.R;
 public class DynamicIslandSettingsBottomSheet extends BottomSheetDialogFragment {
 
     private SharedPreferences prefs;
-    private SwitchMaterial switchEnable;
+    private SwitchMaterial switchEnable, switchHideInLandscape;
     private LinearLayout styleStandard, styleGlassDark, styleGlassBlur, styleLiquidBlue;
     private android.widget.SeekBar seekDuration, seekYOffset;
     private android.widget.TextView lblDurationValue, lblYOffsetValue;
@@ -34,6 +34,7 @@ public class DynamicIslandSettingsBottomSheet extends BottomSheetDialogFragment 
         prefs = requireContext().getSharedPreferences("launcher_prefs", Context.MODE_PRIVATE);
 
         switchEnable = view.findViewById(R.id.switchEnable);
+        switchHideInLandscape = view.findViewById(R.id.switchHideInLandscape);
         styleStandard = view.findViewById(R.id.styleStandard);
         styleGlassDark = view.findViewById(R.id.styleGlassDark);
         styleGlassBlur = view.findViewById(R.id.styleGlassBlur);
@@ -73,6 +74,21 @@ public class DynamicIslandSettingsBottomSheet extends BottomSheetDialogFragment 
                 requireContext().startService(new Intent(requireContext(), DynamicIslandService.class));
             } else {
                 requireContext().stopService(new Intent(requireContext(), DynamicIslandService.class));
+            }
+        });
+
+        // Hide in Landscape
+        boolean isHideInLandscape = prefs.getBoolean("dynamic_island_hide_landscape", true);
+        switchHideInLandscape.setChecked(isHideInLandscape);
+        switchHideInLandscape.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean("dynamic_island_hide_landscape", isChecked).apply();
+            
+            // Restart service to apply change immediately if enabled
+            if (switchEnable.isChecked()) {
+                requireContext().stopService(new Intent(requireContext(), DynamicIslandService.class));
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    requireContext().startForegroundService(new Intent(requireContext(), DynamicIslandService.class));
+                }, 300);
             }
         });
     }

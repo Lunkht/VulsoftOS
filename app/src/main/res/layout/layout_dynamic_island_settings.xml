@@ -218,6 +218,17 @@
                 android:textColor="?attr/colorOnSurface" />
         </LinearLayout>
 
+        <!-- Hide in Landscape Switch -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchHideInLandscape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Masquer en mode paysage"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorSurfaceVariant"
+            android:layout_marginTop="16dp" />
+
     </LinearLayout>
         
     <TextView

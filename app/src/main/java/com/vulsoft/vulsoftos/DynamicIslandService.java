@@ -279,24 +279,30 @@ public class DynamicIslandService extends Service {
     
     private IslandDimensions getDimensionsForRotation(int rotation) {
         android.content.SharedPreferences prefs = getSharedPreferences("launcher_prefs", Context.MODE_PRIVATE);
+        boolean hideInLandscape = prefs.getBoolean("dynamic_island_hide_landscape", false);
         int yOffsetDp = prefs.getInt("dynamic_island_y_offset", 0);
         int yOffsetPx = dpToPx(yOffsetDp);
 
         IslandDimensions d = new IslandDimensions();
-        if (rotation == Surface.ROTATION_90) {
-            // Landscape, Notch on Left
-            d.width = dpToPx(36);
-            d.height = dpToPx(120);
-            d.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
-            d.x = dpToPx(6) + yOffsetPx;
-            d.y = 0;
-        } else if (rotation == Surface.ROTATION_270) {
-            // Landscape, Notch on Right
-            d.width = dpToPx(36);
-            d.height = dpToPx(120);
-            d.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
-            d.x = dpToPx(6) + yOffsetPx;
-            d.y = 0;
+        
+        // Hide in landscape if enabled
+        if (hideInLandscape && (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270)) {
+            d.width = 0;
+            d.height = 0;
+            d.gravity = Gravity.TOP | Gravity.LEFT;
+            d.x = -10000;
+            d.y = -10000;
+            return d;
+        }
+
+        // Standard Landscape Mode: Display at Top Center (Visual Top)
+        // This keeps the notification "vertical" (upright) relative to the user
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            d.width = dpToPx(120);
+            d.height = dpToPx(36);
+            d.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            d.x = 0;
+            d.y = dpToPx(6) + yOffsetPx;
         } else {
             // Portrait (0 or 180)
             d.width = dpToPx(120);
@@ -351,9 +357,15 @@ public class DynamicIslandService extends Service {
         // Calculate target Y (lower in portrait to avoid status bar overlap)
         int rotation = windowManager.getDefaultDisplay().getRotation();
         IslandDimensions dims = getDimensionsForRotation(rotation);
+        
+        // Don't expand if hidden (width=0)
+        if (dims.width == 0) return;
+
         int targetY = dims.y;
         if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) {
             targetY = dims.y + dpToPx(24); // Expand downwards from current Y
+        } else {
+             targetY = dims.y + dpToPx(12); // Less expansion in landscape
         }
 
         animateSize(dpToPx(320), dpToPx(80), targetY); // Expand to wider and taller
@@ -432,9 +444,15 @@ public class DynamicIslandService extends Service {
         // Calculate target Y (lower in portrait to avoid status bar overlap)
         int rotation = windowManager.getDefaultDisplay().getRotation();
         IslandDimensions dims = getDimensionsForRotation(rotation);
+        
+        // Don't expand if hidden (width=0)
+        if (dims.width == 0) return;
+
         int targetY = dims.y;
         if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) {
             targetY = dims.y + dpToPx(24); // Expand downwards from current Y
+        } else {
+             targetY = dims.y + dpToPx(12);
         }
         
         animateSize(dpToPx(280), dpToPx(84), targetY);

@@ -23,8 +23,8 @@
     <string name="default_launcher">Default Launcher</string>
     <string name="notification_access">Notification Access</string>
     <string name="system_permissions">System Permissions</string>
-    <string name="integration_complete">System integration complete</string>
-    <string name="integration_incomplete">System integration incomplete</string>
+    <string name="integration_complete">System Integration Complete</string>
+    <string name="integration_incomplete">System Integration Incomplete</string>
 
     <!-- Permissions & Dialogs -->
     <string name="permission_notification_title">Notification Access</string>
@@ -38,10 +38,10 @@
     <string name="permission_button_cancel">Cancel</string>
     
     <!-- Settings & Backup -->
-    <string name="backup_success">Backup successful</string>
+    <string name="backup_success">Backup Successful</string>
     <string name="backup_error">Error: </string>
-    <string name="restore_success">Restore successful</string>
-    <string name="wallpaper_applied">Wallpaper applied</string>
+    <string name="restore_success">Restore Successful</string>
+    <string name="wallpaper_applied">Wallpaper Applied</string>
     
     <!-- Customization -->
     <string name="text_size">Text Size</string>
@@ -56,7 +56,84 @@
     <string name="menu_hide">Hide</string>
     <string name="menu_organize">Organize</string>
     <string name="menu_uninstall">Uninstall</string>
-    <string name="msg_edit_mode">Organization mode enabled. Touch to move. \nPress Back to exit.</string>
-    <string name="msg_edit_mode_end">Organization mode ended</string>
+    <string name="msg_edit_mode">Edit mode enabled. Tap to move. \nPress Back to exit.</string>
+    <string name="msg_edit_mode_end">Edit mode ended</string>
     <string name="msg_app_hidden">App hidden</string>
+
+    <!-- Gestures -->
+    <string name="gestures_title">Gestures</string>
+    <string name="gesture_swipe_up">Swipe Up</string>
+    <string name="gesture_swipe_down">Swipe Down</string>
+    <string name="gesture_double_tap">Double Tap</string>
+    <string name="gesture_two_finger_swipe">Two Finger Swipe</string>
+
+    <string name="action_none">No Action</string>
+    <string name="action_notifications">Notifications</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_wallpaper">Change Wallpaper</string>
+    <string name="action_assistant">Assistant</string>
+    <string name="action_app_search">Search</string>
+
+    <!-- Zen Mode -->
+    <string name="zen_mode_title">Zen Mode (Focus)</string>
+    <string name="zen_mode_desc">Switch interface to black and white to reduce distractions</string>
+
+    <!-- FAQ Activity -->
+    <string name="faq_title">FAQ / Help</string>
+    <string name="faq_integration_status_title">System Integration Status</string>
+    <string name="faq_integration_checking">Checking...</string>
+    
+    <string name="faq_section_installation">Installation &amp; Setup</string>
+    <string name="faq_q1">How to set ValkuntOS as default launcher?</string>
+    <string name="faq_a1">1. Go to Settings → \'Set as default launcher\'\n2. Or go to Android Settings → Apps → Default Apps → Launcher\n3. Select Vulsoft OS from the list</string>
+    <string name="faq_btn_system_settings">Open System Settings</string>
+
+    <!-- Quick Settings Tiles -->
+    <string name="screen_recorder_title">Recorder</string>
+    <string name="faq_q2">Why does Vulsoft OS request permissions?</string>
+    <string name="faq_a2">• Notification Access: To display notification badges\n• Modify Settings: To change wallpapers\n• Display over other apps: For widgets and overlays\n• Autostart: To activate on boot</string>
+    <string name="faq_btn_notification">Configure Notification Access</string>
+    
+    <string name="faq_section_customization">Customization</string>
+    <string name="faq_q3">How to change the theme?</string>
+    <string name="faq_a3">Go to Settings and choose from:\n• Dark: Elegant dark theme\n• Amoled: Pure black with neon colors\n• System: Adapts to system settings\n• Glass: Modern glassmorphism effect</string>
+    
+    <string name="faq_q4">How to customize widgets?</string>
+    <string name="faq_a4">1. Go to Settings → \'Modify Widgets\'\n2. Drag widgets to move them\n3. Resize with handles\n4. Change colors in settings\n5. Press Back to exit edit mode</string>
+    
+    <string name="faq_q5">What widget colors are available?</string>
+    <string name="faq_a5">6 available colors:\n• White &amp; Black (Classic)\n• Glass (Indigo Blue)\n• Red, Green, Orange (Vivid colors)</string>
+    
+    <string name="faq_section_apps">App Management</string>
+    <string name="faq_q6">How to reorganize apps?</string>
+    <string name="faq_a6">• Long press an icon to move it\n• Drag to the dock to pin it\n• Use \'Reorganize\' in settings to reset\n• Create folders by overlapping apps</string>
+    
+    <string name="faq_q7">How to manage the dock?</string>
+    <string name="faq_a7">• Drag an app to the dock to add it\n• Long press an app in the dock to remove it\n• Maximum 4 apps in the dock\n• Enable/Disable background in settings</string>
+    
+    <string name="faq_section_advanced">Advanced Features</string>
+    <string name="faq_q8">How to use search?</string>
+    <string name="faq_a8">• Type in the top search bar\n• Results appear in real-time\n• Press Enter to launch the first app\n• Clear to return to normal view</string>
+    
+    <string name="faq_q9">What gestures are available?</string>
+    <string name="faq_a9">• Double-click (empty): Open AI Assistant\n• Long press (empty): View recent apps\n• Long press (icon): Menu / Edit Mode\n• Drag an app: Move or delete</string>
+    
+    <string name="faq_q10">How to use the Assistant?</string>
+    <string name="faq_a10">Double-click anywhere on the home screen to launch the Assistant. It can open apps, tell you the time, date, and more. You can also open it from Settings.</string>
+    
+    <string name="faq_q11">How to see recent apps?</string>
+    <string name="faq_a11">Long press on an empty space. A window will appear with your recent apps and a quick search bar.</string>
+    
+    <string name="faq_section_troubleshooting">Troubleshooting</string>
+    <string name="faq_q12">The launcher is slow, what to do?</string>
+    <string name="faq_a12">• Restart the app\n• Check system permissions\n• Reduce blur effects in settings\n• Free up memory by closing other apps\n• Reset app layout if necessary</string>
+    
+    <string name="faq_q13">I found a bug, how to report it?</string>
+    <string name="faq_a13">• Note the steps to reproduce the problem\n• Check your Android version\n• Try restarting the application\n• Contact support with a detailed description</string>
+    
+    <string name="faq_q14">How to reset ValkuntOS?</string>
+    <string name="faq_a14">• Settings → \'Reorganize apps\'\n• Or go to Android Settings → Apps → ValkuntOS → Storage → Clear Data\n• This will restore all default settings</string>
+    
+    <string name="faq_section_about">About</string>
+    <string name="faq_about_desc">Vulsoft OS is a modern Android launcher with advanced customization features, deep system integration, and an elegant user interface.</string>
 </resources>

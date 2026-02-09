@@ -59,4 +59,81 @@
     <string name="msg_edit_mode">整理模式已启用。触摸以移动。\n按返回键退出。</string>
     <string name="msg_edit_mode_end">整理模式已结束</string>
     <string name="msg_app_hidden">应用已隐藏</string>
+
+    <!-- Gestures -->
+    <string name="gestures_title">手势</string>
+    <string name="gesture_swipe_up">上滑</string>
+    <string name="gesture_swipe_down">下滑</string>
+    <string name="gesture_double_tap">双击</string>
+    <string name="gesture_two_finger_swipe">双指滑动</string>
+
+    <string name="action_none">无动作</string>
+    <string name="action_notifications">通知</string>
+    <string name="action_settings">设置</string>
+    <string name="action_wallpaper">更换壁纸</string>
+    <string name="action_assistant">助手</string>
+    <string name="action_app_search">搜索</string>
+
+    <!-- Zen Mode -->
+    <string name="zen_mode_title">专注模式 (Zen)</string>
+    <string name="zen_mode_desc">将界面切换为黑白以减少干扰</string>
+
+    <!-- FAQ Activity -->
+    <string name="faq_title">常见问题 / 帮助</string>
+    <string name="faq_integration_status_title">系统集成状态</string>
+    <string name="faq_integration_checking">正在检查...</string>
+    
+    <string name="faq_section_installation">安装与配置</string>
+    <string name="faq_q1">如何设置 Vulsoft OS 为默认启动器？</string>
+    <string name="faq_a1">1. 进入设置 → \'设置为默认启动器\'\n2. 或进入安卓设置 → 应用 → 默认应用 → 启动器\n3. 在列表中选择 Vulsoft OS</string>
+    <string name="faq_btn_system_settings">打开系统设置</string>
+
+    <!-- Quick Settings Tiles -->
+    <string name="screen_recorder_title">录屏</string>
+    <string name="faq_q2">为什么 Vulsoft OS 需要权限？</string>
+    <string name="faq_a2">• 通知访问：用于显示应用角标\n• 修改设置：用于更换壁纸\n• 悬浮窗：用于小部件和覆盖层\n• 自启动：用于开机启动</string>
+    <string name="faq_btn_notification">配置通知权限</string>
+    
+    <string name="faq_section_customization">个性化</string>
+    <string name="faq_q3">如何更换主题？</string>
+    <string name="faq_a3">进入设置并选择：\n• Dark：优雅的深色主题\n• Amoled：纯黑搭配霓虹色\n• System：跟随系统设置\n• Glass：现代毛玻璃效果</string>
+    
+    <string name="faq_q4">如何自定义小部件？</string>
+    <string name="faq_a4">1. 进入设置 → \'编辑小部件\'\n2. 拖动小部件以移动\n3. 使用手柄调整大小\n4. 在设置中更改颜色\n5. 按返回键退出编辑模式</string>
+    
+    <string name="faq_q5">小部件有哪些颜色可用？</string>
+    <string name="faq_a5">6种颜色可用：\n• 白与黑 (经典)\n• 玻璃 (靛蓝)\n• 红、绿、橙 (鲜艳色)</string>
+    
+    <string name="faq_section_apps">应用管理</string>
+    <string name="faq_q6">如何重新排列应用？</string>
+    <string name="faq_a6">• 长按图标以移动\n• 拖动到托盘以固定\n• 使用设置中的\'重新排列\'重置\n• 重叠应用以创建文件夹</string>
+    
+    <string name="faq_q7">如何管理托盘？</string>
+    <string name="faq_a7">• 拖动应用到托盘以添加\n• 长按托盘应用以移除\n• 托盘最多容纳4个应用\n• 在设置中开启/关闭背景</string>
+    
+    <string name="faq_section_advanced">高级功能</string>
+    <string name="faq_q8">如何使用搜索？</string>
+    <string name="faq_a8">• 点击顶部搜索栏输入\n• 结果实时显示\n• 按回车键启动第一个应用\n• 清除内容以返回正常视图</string>
+    
+    <string name="faq_q9">有哪些可用手势？</string>
+    <string name="faq_a9">• 双击 (空白处)：打开 AI 助手\n• 长按 (空白处)：查看最近应用\n• 长按 (图标)：菜单 / 编辑模式\n• 拖动应用：移动或删除</string>
+    
+    <string name="faq_q10">如何使用助手？</string>
+    <string name="faq_a10">在主屏幕任意空白处双击以启动助手。它可以打开应用、显示时间日期等。您也可以从设置中打开它。</string>
+    
+    <string name="faq_q11">如何查看最近使用的应用？</string>
+    <string name="faq_a11">长按空白区域。将出现一个包含最近应用和快速搜索栏的窗口。</string>
+    
+    <string name="faq_section_troubleshooting">故障排除</string>
+    <string name="faq_q12">启动器运行缓慢，怎么办？</string>
+    <string name="faq_a12">• 重启应用\n• 检查系统权限\n• 在设置中减少模糊效果\n• 关闭其他应用以释放内存\n• 必要时重置应用布局</string>
+    
+    <string name="faq_q13">我发现了 Bug，如何报告？</string>
+    <string name="faq_a13">• 记录复现问题的步骤\n• 检查您的安卓版本\n• 尝试重启应用\n• 联系支持并提供详细描述</string>
+    
+    <string name="faq_q14">如何重置 Vulsoft OS？</string>
+    <string name="faq_a14">• 设置 → \'重新排列应用\'\n• 或进入安卓设置 → 应用 → Vulsoft OS → 存储 → 清除数据\n• 这将恢复所有默认设置</string>
+    
+    <string name="faq_section_about">关于</string>
+    <string name="faq_about_desc">Vulsoft OS 是一款现代化的安卓启动器，具有高级个性化功能、深度系统集成和优雅的用户界面。</string>
 </resources>
