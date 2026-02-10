@@ -27,6 +27,8 @@ public class DynamicIslandSettingsBottomSheet extends BottomSheetDialogFragment 
     private LinearLayout styleStandard, styleGlassDark, styleGlassBlur, styleLiquidBlue;
     private android.widget.SeekBar seekDuration, seekYOffset;
     private android.widget.TextView lblDurationValue, lblYOffsetValue;
+    private android.widget.RadioGroup rgPosition;
+    private android.widget.RadioButton rbPositionCenter, rbPositionLeft;
 
     private final ActivityResultLauncher<Intent> overlayPermissionLauncher =
             registerForActivityResult(
@@ -61,10 +63,15 @@ public class DynamicIslandSettingsBottomSheet extends BottomSheetDialogFragment 
         lblDurationValue = view.findViewById(R.id.lblDurationValue);
         seekYOffset = view.findViewById(R.id.seekYOffset);
         lblYOffsetValue = view.findViewById(R.id.lblYOffsetValue);
+        
+        rgPosition = view.findViewById(R.id.rgPosition);
+        rbPositionCenter = view.findViewById(R.id.rbPositionCenter);
+        rbPositionLeft = view.findViewById(R.id.rbPositionLeft);
 
         setupSwitch();
         setupStyles();
         setupSliders();
+        setupPosition();
         
         view.findViewById(R.id.btnTestNotification).setOnClickListener(v -> {
             if (switchEnable.isChecked()) {
@@ -214,6 +221,31 @@ public class DynamicIslandSettingsBottomSheet extends BottomSheetDialogFragment 
                         requireContext().startForegroundService(new Intent(requireContext(), DynamicIslandService.class));
                     }, 300);
                 }
+            }
+        });
+    }
+
+    private void setupPosition() {
+        String position = prefs.getString("dynamic_island_position", "center");
+        if ("left".equals(position)) {
+            rbPositionLeft.setChecked(true);
+        } else {
+            rbPositionCenter.setChecked(true);
+        }
+
+        rgPosition.setOnCheckedChangeListener((group, checkedId) -> {
+            String newPos = "center";
+            if (checkedId == R.id.rbPositionLeft) {
+                newPos = "left";
+            }
+            prefs.edit().putString("dynamic_island_position", newPos).apply();
+
+            // Restart service to apply change
+            if (switchEnable.isChecked()) {
+                requireContext().stopService(new Intent(requireContext(), DynamicIslandService.class));
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    requireContext().startForegroundService(new Intent(requireContext(), DynamicIslandService.class));
+                }, 300);
             }
         });
     }

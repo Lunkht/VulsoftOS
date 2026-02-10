@@ -280,6 +280,7 @@ public class DynamicIslandService extends Service {
     private IslandDimensions getDimensionsForRotation(int rotation) {
         android.content.SharedPreferences prefs = getSharedPreferences("launcher_prefs", Context.MODE_PRIVATE);
         boolean hideInLandscape = prefs.getBoolean("dynamic_island_hide_landscape", false);
+        String position = prefs.getString("dynamic_island_position", "center");
         int yOffsetDp = prefs.getInt("dynamic_island_y_offset", 0);
         int yOffsetPx = dpToPx(yOffsetDp);
 
@@ -313,8 +314,16 @@ public class DynamicIslandService extends Service {
             // Portrait (0 or 180)
             d.width = dpToPx(120);
             d.height = dpToPx(36);
-            d.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-            d.x = 0;
+            
+            if ("left".equals(position)) {
+                d.gravity = Gravity.TOP | Gravity.LEFT;
+                // Add margin for left alignment (approx 12dp + curve)
+                d.x = dpToPx(12); 
+            } else {
+                d.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+                d.x = 0;
+            }
+            
             d.y = dpToPx(6) + yOffsetPx;
         }
         return d;

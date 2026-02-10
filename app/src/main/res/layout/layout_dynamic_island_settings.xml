@@ -218,6 +218,38 @@
                 android:textColor="?attr/colorOnSurface" />
         </LinearLayout>
 
+        <!-- Notch Position Setting -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Position de l'encoche"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorSurfaceVariant"
+            android:layout_marginTop="16dp" />
+
+        <RadioGroup
+            android:id="@+id/rgPosition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+            
+            <RadioButton
+                android:id="@+id/rbPositionCenter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Centrée"
+                android:layout_weight="1" />
+                
+            <RadioButton
+                android:id="@+id/rbPositionLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gauche"
+                android:layout_weight="1" />
+        </RadioGroup>
+
         <!-- Hide in Landscape Switch -->
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchHideInLandscape"
