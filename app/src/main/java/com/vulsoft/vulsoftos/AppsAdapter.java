@@ -123,6 +123,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
     @Override
     public void onBindViewHolder(@NonNull AppViewHolder holder, int position) {
         final AppItem item = apps.get(position);
+        android.util.Log.d("RuvoluteDebug", "AppsAdapter: Binding pos=" + position + " Label=" + item.label);
         int type = getItemViewType(position);
         if (type == VIEW_TYPE_WIDGET) {
             bindWidget(holder, item);
@@ -393,17 +394,10 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int pos = holder.getBindingAdapterPosition();
-                    if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                        AppItem clickedItem = apps.get(pos);
-                        android.util.Log.d("RuvoluteDebug", "AppsAdapter: Clicked pos=" + pos + 
-                            ", Label=" + clickedItem.label + 
-                            ", Pkg=" + clickedItem.packageName);
-                        if (clickListener != null) {
-                            clickListener.onAppClick(clickedItem);
-                        }
-                    } else {
-                        android.util.Log.e("RuvoluteDebug", "AppsAdapter: Invalid pos=" + pos + ", size=" + apps.size());
+                    android.util.Log.d("RuvoluteDebug", "AppsAdapter: Clicked Item Label=" + item.label + 
+                        ", Pkg=" + item.packageName);
+                    if (clickListener != null) {
+                        clickListener.onAppClick(item);
                     }
                 }
             });
@@ -412,11 +406,8 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
                 @Override
                 public boolean onLongClick(View v) {
                     longPressTriggered[0] = true;
-                    int pos = holder.getBindingAdapterPosition();
-                    if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                        if (longClickListener != null) {
-                            longClickListener.onAppLongClick(apps.get(pos), v);
-                        }
+                    if (longClickListener != null) {
+                        longClickListener.onAppLongClick(item, v);
                     }
                     // Return true to consume the event, but allow subsequent drag
                     return true;

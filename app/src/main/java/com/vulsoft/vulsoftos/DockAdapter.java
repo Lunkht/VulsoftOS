@@ -201,20 +201,14 @@ public class DockAdapter extends RecyclerView.Adapter<DockAdapter.DockViewHolder
             holder.itemView.setOnTouchListener(null);
             
             holder.itemView.setOnClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < dockApps.size()) {
-                    if (listener != null) {
-                        listener.onDockClick(dockApps.get(pos));
-                    }
+                if (listener != null) {
+                    listener.onDockClick(item);
                 }
             });
 
             holder.itemView.setOnLongClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < dockApps.size()) {
-                    if (longClickListener != null) {
-                        longClickListener.onAppLongClick(dockApps.get(pos), v);
-                    }
+                if (longClickListener != null) {
+                    longClickListener.onAppLongClick(item, v);
                 }
                 return true;
             });

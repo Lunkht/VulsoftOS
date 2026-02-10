@@ -228,6 +228,10 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         recyclerAppsList.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(this, 4));
         
         AppsAdapter.OnAppClickListener appClickListener = appItem -> {
+            android.util.Log.d("RuvoluteDebug", "MainActivity: onAppClick: " + appItem.label + " (" + appItem.packageName + ")");
+            // Debug Toast
+            // android.widget.Toast.makeText(MainActivity.this, "Debug: " + appItem.label + " (" + appItem.packageName + ")", android.widget.Toast.LENGTH_SHORT).show();
+            
             if (appItem.packageName != null && appItem.packageName.equals(getPackageName())) {
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
@@ -1255,6 +1259,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                     new AppsAdapter.OnAppClickListener() {
                         @Override
                         public void onAppClick(AppItem appItem) {
+                            android.util.Log.d("RuvoluteDebug", "MainActivity(Pager): onAppClick: " + appItem.label + " (" + appItem.packageName + ")");
                             if (appItem.type == AppItem.Type.APP) {
                                 if (appItem.packageName != null && appItem.packageName.equals(getPackageName())) {
                                     needsReload = true;
