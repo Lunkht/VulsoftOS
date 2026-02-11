@@ -714,6 +714,8 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                 loadedApps.add(item);
             }
 
+            android.util.Log.d("RuvoluteDebug", "loadInstalledApps: Loaded " + loadedApps.size() + " apps from PM");
+
             // Load saved order and widgets
             AppLayoutManager.SavedLayout savedLayout = AppLayoutManager.loadLayout(this, pm);
 
@@ -721,6 +723,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
             List<AppItem> finalDock = new ArrayList<>();
 
             if (savedLayout != null) {
+                android.util.Log.d("RuvoluteDebug", "loadInstalledApps: Using saved layout");
                 List<AppItem> remainingApps = new ArrayList<>(loadedApps);
 
                 // 1. Process Grid
@@ -759,6 +762,8 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                             if (found != null) {
                                 finalGrid.add(found);
                                 remainingApps.remove(found);
+                            } else {
+                                android.util.Log.w("RuvoluteDebug", "loadInstalledApps: Saved app not found: " + savedItem.packageName);
                             }
                         }
                     }
@@ -797,6 +802,8 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                             if (found != null) {
                                 finalDock.add(found);
                                 remainingApps.remove(found);
+                            } else {
+                                android.util.Log.w("RuvoluteDebug", "loadInstalledApps: Saved dock app not found: " + savedItem.packageName);
                             }
                         }
                     }
@@ -805,14 +812,19 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                 // Add remaining new apps
                 remainingApps.sort((a, b) -> a.label.compareToIgnoreCase(b.label));
                 finalGrid.addAll(remainingApps);
+                if (!remainingApps.isEmpty()) {
+                    android.util.Log.d("RuvoluteDebug", "loadInstalledApps: Added " + remainingApps.size() + " remaining apps");
+                }
 
             } else {
+                android.util.Log.d("RuvoluteDebug", "loadInstalledApps: No saved layout, using default sort");
                 // Default sort
                 loadedApps.sort((a, b) -> a.label.compareToIgnoreCase(b.label));
                 finalGrid.addAll(loadedApps);
             }
 
             runOnUiThread(() -> {
+                android.util.Log.d("RuvoluteDebug", "loadInstalledApps: Updating UI (Grid=" + finalGrid.size() + ", Dock=" + finalDock.size() + ")");
                 // Update Cache
                 sCachedAppItems.clear();
                 sCachedAppItems.addAll(finalGrid);
