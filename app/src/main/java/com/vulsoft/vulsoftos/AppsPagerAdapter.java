@@ -180,30 +180,39 @@ public class AppsPagerAdapter extends RecyclerView.Adapter<AppsPagerAdapter.Page
         if (holder.textEmpty != null) holder.textEmpty.setVisibility(View.GONE);
         if (holder.layoutPermission != null) holder.layoutPermission.setVisibility(View.GONE);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(holder.recyclerView.getContext(), spanCount);
+        // Optimization: Reuse LayoutManager and Adapter if already set
+        GridLayoutManager layoutManager;
+        if (holder.recyclerView.getLayoutManager() instanceof GridLayoutManager) {
+            layoutManager = (GridLayoutManager) holder.recyclerView.getLayoutManager();
+            if (layoutManager.getSpanCount() != spanCount) {
+                layoutManager.setSpanCount(spanCount);
+            }
+        } else {
+            layoutManager = new GridLayoutManager(holder.recyclerView.getContext(), spanCount);
+            holder.recyclerView.setLayoutManager(layoutManager);
+        }
+
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position < 0 || position >= pageApps.size()) return 1;
                 AppItem item = pageApps.get(position);
                 if (item.type == AppItem.Type.WIDGET) {
-                    // Return spanX, but ensure it doesn't exceed spanCount
                     return Math.min(item.spanX, spanCount);
                 }
                 return 1;
             }
         });
         
-        holder.recyclerView.setLayoutManager(layoutManager);
-        
-        AppsAdapter.OnAppClickListener wrappedClickListener = new AppsAdapter.OnAppClickListener() {
-            @Override
-            public void onAppClick(AppItem appItem) {
-                clickListener.onAppClick(appItem);
-            }
-        };
+        AppsAdapter adapter;
+        if (holder.recyclerView.getAdapter() instanceof AppsAdapter) {
+            adapter = (AppsAdapter) holder.recyclerView.getAdapter();
+            adapter.updateData(pageApps);
+        } else {
+            adapter = new AppsAdapter(pageApps, iconRadiusPercent, clickListener, longClickListener);
+            holder.recyclerView.setAdapter(adapter);
+        }
 
-        AppsAdapter adapter = new AppsAdapter(pageApps, iconRadiusPercent, wrappedClickListener, longClickListener);
         adapter.setAppWidgetHost(appWidgetHost);
         if (iconSize > 0) adapter.setAppIconSize(iconSize);
         if (textSize > 0) adapter.setAppTextSize(textSize);
@@ -211,7 +220,6 @@ public class AppsPagerAdapter extends RecyclerView.Adapter<AppsPagerAdapter.Page
         adapter.setTwoLineTitles(twoLineTitles);
         adapter.updateNotificationCounts(notificationCounts);
         adapter.setDragEnabled(isDragEnabled);
-        holder.recyclerView.setAdapter(adapter);
         
         // Vertical Spacing
         // Remove existing decorations to avoid duplicates
@@ -234,30 +242,31 @@ public class AppsPagerAdapter extends RecyclerView.Adapter<AppsPagerAdapter.Page
         // Only enable drag & drop for normal app pages
         final int currentPageIndex = position;
         
-        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
-                0
-        ) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                // ItemTouchHelper reordering is disabled to favor System Drag & Drop (Dock <-> Grid)
-                return false;
-            }
+        // ItemTouchHelper should only be attached once per RecyclerView
+        if (holder.recyclerView.getTag(R.id.tag_touch_helper) == null) {
+            ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(
+                    ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,
+                    0
+            ) {
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    return false;
+                }
 
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                // No swipe action
-            }
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                }
+                
+                @Override
+                public boolean isLongPressDragEnabled() {
+                    return false;
+                }
+            };
             
-            @Override
-            public boolean isLongPressDragEnabled() {
-                // Disable ItemTouchHelper drag. We use View.startDragAndDrop in AppsAdapter for Edit Mode.
-                return false;
-            }
-        };
-        
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(holder.recyclerView);
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+            itemTouchHelper.attachToRecyclerView(holder.recyclerView);
+            holder.recyclerView.setTag(R.id.tag_touch_helper, itemTouchHelper);
+        }
     }
 
     @Override

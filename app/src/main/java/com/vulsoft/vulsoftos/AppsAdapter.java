@@ -86,6 +86,12 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
         notifyDataSetChanged();
     }
 
+    public void updateData(List<AppItem> newApps) {
+        this.apps.clear();
+        this.apps.addAll(newApps);
+        notifyDataSetChanged();
+    }
+
     public void updateNotificationCounts(java.util.Map<String, Integer> counts) {
         this.notificationCounts = counts;
         notifyDataSetChanged();
@@ -394,8 +400,13 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    android.util.Log.d("RuvoluteDebug", "AppsAdapter: Clicked Item Label=" + item.label + 
-                        ", Pkg=" + item.packageName);
+                    android.util.Log.d("RuvoluteDebug", "AppsAdapter: CLICK DETECTED");
+                    android.util.Log.d("RuvoluteDebug", " - Label: " + item.label);
+                    android.util.Log.d("RuvoluteDebug", " - Package: " + item.packageName);
+                    android.util.Log.d("RuvoluteDebug", " - Class: " + item.className);
+                    android.util.Log.d("RuvoluteDebug", " - Type: " + item.type);
+                    android.util.Log.d("RuvoluteDebug", " - Intent: " + (item.launchIntent != null ? item.launchIntent.toString() : "NULL"));
+                    
                     if (clickListener != null) {
                         clickListener.onAppClick(item);
                     }

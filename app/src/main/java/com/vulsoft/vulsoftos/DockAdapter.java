@@ -201,6 +201,11 @@ public class DockAdapter extends RecyclerView.Adapter<DockAdapter.DockViewHolder
             holder.itemView.setOnTouchListener(null);
             
             holder.itemView.setOnClickListener(v -> {
+                android.util.Log.d("RuvoluteDebug", "DockAdapter: CLICK DETECTED");
+                android.util.Log.d("RuvoluteDebug", " - Label: " + item.label);
+                android.util.Log.d("RuvoluteDebug", " - Package: " + item.packageName);
+                android.util.Log.d("RuvoluteDebug", " - Intent: " + (item.launchIntent != null ? item.launchIntent.toString() : "NULL"));
+                
                 if (listener != null) {
                     listener.onDockClick(item);
                 }
