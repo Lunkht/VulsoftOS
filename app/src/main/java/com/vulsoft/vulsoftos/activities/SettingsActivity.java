@@ -39,6 +39,7 @@ public class SettingsActivity extends BaseActivity {
     public static final String PREF_DRAWER_STYLE = "drawer_style";
     public static final String DRAWER_STYLE_GRID = "grid";
     public static final String DRAWER_STYLE_LIST = "list";
+    public static final String DRAWER_STYLE_WP = "windows_phone";
 
     public static final String PREF_STATUS_BAR_STYLE = "status_bar_style";
     public static final String STATUS_BAR_AUTO = "auto";
@@ -237,8 +238,16 @@ public class SettingsActivity extends BaseActivity {
             SharedPreferences prefs = getSharedPreferences("launcher_prefs", MODE_PRIVATE);
             prefs.edit().putString(PREF_DRAWER_STYLE, DRAWER_STYLE_LIST).apply();
             Toast.makeText(this, "Style Liste activé", Toast.LENGTH_SHORT).show();
-            // Optional: update UI to reflect selection
         });
+
+        LinearLayout btnStyleWP = findViewById(R.id.btnStyleWP);
+        if (btnStyleWP != null) {
+            btnStyleWP.setOnClickListener(v -> {
+                SharedPreferences prefs = getSharedPreferences("launcher_prefs", MODE_PRIVATE);
+                prefs.edit().putString(PREF_DRAWER_STYLE, DRAWER_STYLE_WP).apply();
+                Toast.makeText(this, "Style Windows Phone activé", Toast.LENGTH_SHORT).show();
+            });
+        }
 
         // About & FAQ & Feedback
         findViewById(R.id.btnAbout)

@@ -77,6 +77,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
     private DockAdapter dockAdapter;
     private AppsPagerAdapter pagerAdapter;
     private AppsAdapter listAdapter;
+    private TileAdapter tileAdapter;
     private final List<AppItem> appItems = new ArrayList<>();
     private final List<AppItem> dockItems = new ArrayList<>();
     // Static cache to prevent empty screen on recreate()
@@ -246,6 +247,16 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         
         listAdapter = new AppsAdapter(appItems, iconRadiusPercent, appClickListener, appLongClickListener);
         recyclerAppsList.setAdapter(listAdapter);
+
+        // Setup Tile Adapter (Windows Phone Style)
+        tileAdapter = new TileAdapter(appItems, appItem -> {
+            if (appItem.packageName != null && appItem.packageName.equals(getPackageName())) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            } else if (appItem.launchIntent != null) {
+                startActivity(appItem.launchIntent);
+            }
+        });
 
         // Setup Drag & Drop Listener
         viewPagerApps.setOnDragListener(dragListener);
@@ -844,8 +855,10 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                     dockAdapter.notifyDataSetChanged();
                 // We need to notify pagerAdapter too if it exists
                 if (pagerAdapter != null)
-                    pagerAdapter.updateApps();
-            });
+                pagerAdapter.updateApps();
+            if (tileAdapter != null)
+                tileAdapter.notifyDataSetChanged();
+        });
         }).start();
     }
 
@@ -1141,26 +1154,45 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
             }
         }
         
-        // Drawer Style (Grid vs List)
+        // Drawer Style (Grid vs List vs WP)
         String drawerStyle = prefs.getString("drawer_style", "grid");
         boolean isListMode = "list".equals(drawerStyle);
+        boolean isWPMode = "windows_phone".equals(drawerStyle);
         
         if (recyclerAppsList != null && viewPagerApps != null && layoutPageIndicator != null) {
             if (isListMode) {
-                // Show list, hide pager
+                // Show list, hide others
                 recyclerAppsList.setVisibility(View.VISIBLE);
                 viewPagerApps.setVisibility(View.GONE);
                 layoutPageIndicator.setVisibility(View.GONE);
                 
                 // Update list adapter
+                recyclerAppsList.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(this, 4));
+                recyclerAppsList.setAdapter(listAdapter);
                 if (listAdapter != null) {
                     listAdapter.notifyDataSetChanged();
+                }
+            } else if (isWPMode) {
+                // Show tiles, hide others
+                recyclerAppsList.setVisibility(View.VISIBLE);
+                viewPagerApps.setVisibility(View.GONE);
+                layoutPageIndicator.setVisibility(View.GONE);
+                
+                // Update tile adapter
+                recyclerAppsList.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(this, 2));
+                recyclerAppsList.setAdapter(tileAdapter);
+                // Adjust padding for WP mode (Metro style)
+                recyclerAppsList.setPadding(0, 0, 0, 0);
+                if (tileAdapter != null) {
+                    tileAdapter.notifyDataSetChanged();
                 }
             } else {
                 // Show pager, hide list
                 recyclerAppsList.setVisibility(View.GONE);
                 viewPagerApps.setVisibility(View.VISIBLE);
                 layoutPageIndicator.setVisibility(View.VISIBLE);
+                // Restore padding
+                recyclerAppsList.setPadding((int)(16 * getResources().getDisplayMetrics().density), 0, (int)(16 * getResources().getDisplayMetrics().density), 0);
             }
         }
         
