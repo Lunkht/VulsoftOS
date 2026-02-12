@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
 public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder> {
 
     public interface OnAppClickListener {
@@ -46,7 +45,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
     private boolean twoLineTitles = false;
 
     public AppsAdapter(List<AppItem> apps, int iconRadiusPercent, OnAppClickListener clickListener,
-            OnAppLongClickListener longClickListener) {
+                       OnAppLongClickListener longClickListener) {
         this.apps = apps;
         this.iconRadiusPercent = iconRadiusPercent;
         this.clickListener = clickListener;
@@ -111,11 +110,11 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
     @Override
     public AppViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_WIDGET) {
-             FrameLayout container = new FrameLayout(parent.getContext());
-             container.setLayoutParams(new ViewGroup.LayoutParams(
-                     ViewGroup.LayoutParams.MATCH_PARENT, 
-                     ViewGroup.LayoutParams.WRAP_CONTENT));
-             return new AppViewHolder(container, true, false);
+            FrameLayout container = new FrameLayout(parent.getContext());
+            container.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            return new AppViewHolder(container, true, false);
         } else if (viewType == VIEW_TYPE_FOLDER) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.folder_item, parent, false);
@@ -129,7 +128,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
     @Override
     public void onBindViewHolder(@NonNull AppViewHolder holder, int position) {
         final AppItem item = apps.get(position);
-        android.util.Log.d("RuvoluteDebug", "AppsAdapter: Binding pos=" + position + " Label=" + item.label);
+        android.util.Log.d("RuvoluteDebug", "AppsAdapter: Binding pos=" + position + " Label=" + item.label + " Package=" + item.packageName);
         int type = getItemViewType(position);
         if (type == VIEW_TYPE_WIDGET) {
             bindWidget(holder, item);
@@ -146,7 +145,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
         holder.label.setVisibility(showLabels ? View.VISIBLE : View.GONE);
         holder.label.setMaxLines(twoLineTitles ? 2 : 1);
         holder.label.setSingleLine(!twoLineTitles);
-        
+
         if (textSize > 0) {
             holder.label.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, textSize);
         }
@@ -154,15 +153,15 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
         // Background for folder container
         android.graphics.drawable.GradientDrawable background = new android.graphics.drawable.GradientDrawable();
         background.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
-        background.setColor(android.graphics.Color.parseColor("#44888888")); // Semi-transparent grey
-        
+        background.setColor(android.graphics.Color.parseColor("#44888888"));
+
         float density = context.getResources().getDisplayMetrics().density;
         float sizePx = 60 * density;
         float radiusPx = (sizePx / 2f) * (iconRadiusPercent / 100f);
         background.setCornerRadius(radiusPx);
-        
+
         holder.folderContainer.setBackground(background);
-        
+
         // Populate mini icons
         for (int i = 0; i < 4; i++) {
             ImageView miniIcon = holder.miniIcons[i];
@@ -176,26 +175,44 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
                 }
             }
         }
-        
+
+        // ✅ FIX: Use getBindingAdapterPosition() instead of capturing 'item'
         if (isDragEnabled) {
             holder.itemView.setOnClickListener(null);
             holder.itemView.setOnLongClickListener(v -> {
-                android.content.ClipData.Item clipItem = new android.content.ClipData.Item(item.packageName != null ? item.packageName : "folder");
-                android.content.ClipData dragData = new android.content.ClipData(item.label, new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN}, clipItem);
-                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                v.startDragAndDrop(dragData, myShadow, item, 0);
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
+                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item(
+                            clickedItem.packageName != null ? clickedItem.packageName : "folder");
+                    android.content.ClipData dragData = new android.content.ClipData(
+                            clickedItem.label,
+                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
+                            clipItem);
+                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
+                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
+                }
                 return true;
             });
         } else {
             holder.itemView.setOnClickListener(v -> {
-                if (clickListener != null) {
-                    clickListener.onAppClick(item);
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
+                    android.util.Log.d("RuvoluteDebug", "Folder clicked at pos " + pos + ": " + clickedItem.label);
+                    if (clickListener != null) {
+                        clickListener.onAppClick(clickedItem);
+                    }
                 }
             });
-            
+
             holder.itemView.setOnLongClickListener(v -> {
-                if (longClickListener != null) {
-                    longClickListener.onAppLongClick(item, v);
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
+                    if (longClickListener != null) {
+                        longClickListener.onAppLongClick(clickedItem, v);
+                    }
                 }
                 return true;
             });
@@ -204,33 +221,43 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
 
     private void bindWidget(AppViewHolder holder, AppItem item) {
         if (appWidgetHost == null) return;
-        
+
         FrameLayout container = (FrameLayout) holder.itemView;
         container.removeAllViews();
-        
+
         AppWidgetHostView hostView = appWidgetHost.createView(container.getContext(), item.widgetId, null);
         hostView.setAppWidget(item.widgetId, null);
-        
-        float density = container.getResources().getDisplayMetrics().density;
-        
+
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
         );
         container.addView(hostView, params);
-        
+
+        // ✅ FIX: Use getBindingAdapterPosition()
         if (isDragEnabled) {
-             hostView.setOnLongClickListener(v -> {
-                android.content.ClipData.Item clipItem = new android.content.ClipData.Item("widget_" + item.widgetId);
-                android.content.ClipData dragData = new android.content.ClipData(item.label, new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN}, clipItem);
-                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                v.startDragAndDrop(dragData, myShadow, item, 0);
+            hostView.setOnLongClickListener(v -> {
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
+                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item("widget_" + clickedItem.widgetId);
+                    android.content.ClipData dragData = new android.content.ClipData(
+                            clickedItem.label,
+                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
+                            clipItem);
+                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
+                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
+                }
                 return true;
             });
         } else {
             hostView.setOnLongClickListener(v -> {
-                if (longClickListener != null) {
-                    longClickListener.onAppLongClick(item, v);
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
+                    if (longClickListener != null) {
+                        longClickListener.onAppLongClick(clickedItem, v);
+                    }
                 }
                 return true;
             });
@@ -246,7 +273,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
         holder.label.setMaxLines(twoLineTitles ? 2 : 1);
         holder.label.setSingleLine(!twoLineTitles);
         holder.label.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        
+
         if (textSize > 0) {
             holder.label.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, textSize);
         }
@@ -265,29 +292,24 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
 
         // Theme Adaptation
         if (ThemeManager.THEME_AMOLED.equals(currentTheme)) {
-            // SHMO: Black background, Neon Green text/icons/border
             background.setColor(context.getColor(R.color.shmo_squircle_bg));
             background.setStroke(1, context.getColor(R.color.shmo_neon_lime));
             holder.label.setTextColor(context.getColor(R.color.shmo_neon_lime));
-            holder.icon.clearColorFilter(); // Do not tint original app icons
+            holder.icon.clearColorFilter();
         } else if (ThemeManager.THEME_GLASS.equals(currentTheme)) {
-            // Liquid Glass: Glassy background, White text
             background = ThemeManager.getLiquidGlassDrawable();
             holder.label.setTextColor(android.graphics.Color.WHITE);
             holder.icon.clearColorFilter();
         } else if (ThemeManager.THEME_LIGHT.equals(currentTheme)) {
-            // Light Mode: White background, Black text
             background.setColor(android.graphics.Color.WHITE);
             holder.label.setTextColor(android.graphics.Color.BLACK);
             holder.icon.clearColorFilter();
         } else {
-            // Default
             background.setColor(android.graphics.Color.parseColor("#888888"));
             holder.label.setTextColor(android.graphics.Color.WHITE);
             holder.icon.clearColorFilter();
         }
 
-        // 60dp is the size in app_item.xml
         float density = holder.itemView.getResources().getDisplayMetrics().density;
         float sizePx = 60 * density;
         float radiusPx = (sizePx / 2f) * (iconRadiusPercent / 100f);
@@ -296,26 +318,22 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
         holder.icon.setBackground(background);
 
         // Adaptive Icon Handling
-        // If icon is NOT adaptive (legacy square), increase padding to make it look
-        // like a foreground
-        int paddingDp = 4; // Default padding
-        
+        int paddingDp = 4;
+
         String currentIconPack = IconPackManager.getSavedIconPack(context);
         if (IconPackManager.PACK_AFRIQUI.equals(currentIconPack)) {
-            // Force small padding for Afriqui theme to ensure icons are large enough
             paddingDp = 4;
         } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             if (!(item.icon instanceof android.graphics.drawable.AdaptiveIconDrawable)) {
-                paddingDp = 12; // Increase padding for legacy icons
+                paddingDp = 12;
             }
         } else {
-            // Pre-Oreo, assume all icons are legacy/bitmap
             paddingDp = 12;
         }
         int paddingPx = (int) (paddingDp * density);
         holder.icon.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
 
-        // Notification Animation (Zoom In/Out)
+        // Notification Animation
         boolean hasNotifications = false;
         if (notificationCounts.containsKey(item.packageName)) {
             Integer count = notificationCounts.get(item.packageName);
@@ -348,19 +366,26 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
             }
         }
 
+        // ✅ FIX: Use getBindingAdapterPosition() to avoid wrong app opening
         if (isDragEnabled) {
-            // Edit Mode: Use native Drag & Drop to allow moving between Grid and Dock
             holder.itemView.setOnClickListener(null);
             holder.itemView.setOnTouchListener(null);
             holder.itemView.setOnLongClickListener(v -> {
-                android.content.ClipData.Item clipItem = new android.content.ClipData.Item(item.packageName);
-                android.content.ClipData dragData = new android.content.ClipData(item.label, new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN}, clipItem);
-                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                v.startDragAndDrop(dragData, myShadow, item, 0);
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
+                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item(clickedItem.packageName);
+                    android.content.ClipData dragData = new android.content.ClipData(
+                            clickedItem.label,
+                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
+                            clipItem);
+                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
+                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
+                }
                 return true;
             });
         } else {
-            // Normal Mode: Click to Open, Long Click shows Menu AND enables drag
+            // Normal Mode: Click to Open, Long Click shows Menu
             final float[] touchStart = new float[2];
             final boolean[] longPressTriggered = { false };
             final boolean[] dragStarted = { false };
@@ -375,7 +400,6 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
                         dragStarted[0] = false;
                         break;
                     case android.view.MotionEvent.ACTION_MOVE:
-                        // If long press was triggered and user moves, start drag
                         if (longPressTriggered[0] && !dragStarted[0]) {
                             float dx = Math.abs(event.getRawX() - touchStart[0]);
                             float dy = Math.abs(event.getRawY() - touchStart[1]);
@@ -397,32 +421,31 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
                 return false;
             });
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    android.util.Log.d("RuvoluteDebug", "AppsAdapter: CLICK DETECTED");
-                    android.util.Log.d("RuvoluteDebug", " - Label: " + item.label);
-                    android.util.Log.d("RuvoluteDebug", " - Package: " + item.packageName);
-                    android.util.Log.d("RuvoluteDebug", " - Class: " + item.className);
-                    android.util.Log.d("RuvoluteDebug", " - Type: " + item.type);
-                    android.util.Log.d("RuvoluteDebug", " - Intent: " + (item.launchIntent != null ? item.launchIntent.toString() : "NULL"));
-                    
+            holder.itemView.setOnClickListener(v -> {
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
+                    android.util.Log.d("RuvoluteDebug", "AppsAdapter: CLICK at position " + pos);
+                    android.util.Log.d("RuvoluteDebug", " - Label: " + clickedItem.label);
+                    android.util.Log.d("RuvoluteDebug", " - Package: " + clickedItem.packageName);
+                    android.util.Log.d("RuvoluteDebug", " - Type: " + clickedItem.type);
+
                     if (clickListener != null) {
-                        clickListener.onAppClick(item);
+                        clickListener.onAppClick(clickedItem);
                     }
                 }
             });
 
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
+            holder.itemView.setOnLongClickListener(v -> {
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
                     longPressTriggered[0] = true;
                     if (longClickListener != null) {
-                        longClickListener.onAppLongClick(item, v);
+                        longClickListener.onAppLongClick(clickedItem, v);
                     }
-                    // Return true to consume the event, but allow subsequent drag
-                    return true;
                 }
+                return true;
             });
         }
     }
@@ -436,7 +459,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
         ImageView icon;
         TextView label;
         ObjectAnimator animator;
-        
+
         // Folder specific
         FrameLayout folderContainer;
         ImageView[] miniIcons;
