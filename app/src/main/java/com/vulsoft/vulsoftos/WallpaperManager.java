@@ -78,12 +78,30 @@ public class WallpaperManager {
 
     public static void setRandomWallpaper(Context context) {
         int[] wallpapers = {
-            R.drawable.wallpaper_black,
-            R.drawable.wallpaper_blue,
-            R.drawable.wallpaper_dark,
-            R.drawable.wallpaper_green,
-            R.drawable.wallpaper_orange,
-            R.drawable.wallpaper_purple
+                R.drawable.wallpaper_purple,
+                R.drawable.wallpaper_blue,
+                R.drawable.wallpaper_dark,
+                R.drawable.wallpaper_black,
+                R.drawable.wallpaper_orange,
+                R.drawable.wallpaper_green,
+                R.drawable.gradient_fire,
+                R.drawable.gradient_bg,
+                R.drawable.gradient_night,
+                R.drawable.gradient_radial,
+                R.drawable.gradient_ocean,
+                R.drawable.gradient_border_glass,
+                R.drawable.gradient_moun,
+                R.drawable.gradient_forest,
+                R.drawable.gradient_sunset,
+                R.drawable.gradient_purple_pink,
+                R.drawable.benin,
+                R.drawable.burkina_faso,
+                R.drawable.ghana,
+                R.drawable.guinea,
+                R.drawable.ivory_cost,
+                R.drawable.mali,
+                R.drawable.morocco,
+                R.drawable.nageria
         };
 
         int currentResId = getSavedWallpaper(context);

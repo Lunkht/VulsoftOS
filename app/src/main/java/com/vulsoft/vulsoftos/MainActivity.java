@@ -156,7 +156,6 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
             shakeDetector.setOnShakeListener(count -> {
                 WallpaperManager.setRandomWallpaper(this);
                 applyWallpaper();
-                Toast.makeText(this, "Fond d'écran changé !", Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -508,7 +507,6 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                 // Changer le fond d'écran
                 WallpaperManager.setRandomWallpaper(this);
                 applyWallpaper();
-                Toast.makeText(this, "Fond d'écran changé !", Toast.LENGTH_SHORT).show();
                 break;
                 
             case SettingsActivity.ACTION_ASSISTANT:
