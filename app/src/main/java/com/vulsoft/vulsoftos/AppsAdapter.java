@@ -366,60 +366,63 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
             }
         }
 
-        // ✅ FIX: Use getBindingAdapterPosition() to avoid wrong app opening
+        // Mode organisation actif : glisser-déplacer + menu au long clic
         if (isDragEnabled) {
-            holder.itemView.setOnClickListener(null);
-            holder.itemView.setOnTouchListener(null);
-            holder.itemView.setOnLongClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item(clickedItem.packageName);
-                    android.content.ClipData dragData = new android.content.ClipData(
-                            clickedItem.label,
-                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
-                            clipItem);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
-                }
-                return true;
-            });
-        } else {
-            // Normal Mode: Click to Open, Long Click shows Menu
             final float[] touchStart = new float[2];
-            final boolean[] longPressTriggered = { false };
             final boolean[] dragStarted = { false };
             final int touchSlop = android.view.ViewConfiguration.get(context).getScaledTouchSlop();
+
+            holder.itemView.setOnClickListener(null);
 
             holder.itemView.setOnTouchListener((v, event) -> {
                 switch (event.getAction()) {
                     case android.view.MotionEvent.ACTION_DOWN:
                         touchStart[0] = event.getRawX();
                         touchStart[1] = event.getRawY();
-                        longPressTriggered[0] = false;
                         dragStarted[0] = false;
                         break;
                     case android.view.MotionEvent.ACTION_MOVE:
-                        if (longPressTriggered[0] && !dragStarted[0]) {
+                        if (!dragStarted[0]) {
                             float dx = Math.abs(event.getRawX() - touchStart[0]);
                             float dy = Math.abs(event.getRawY() - touchStart[1]);
                             if (dx > touchSlop || dy > touchSlop) {
-                                dragStarted[0] = true;
-                                if (itemTouchHelper != null) {
-                                    itemTouchHelper.startDrag(holder);
+                                int pos = holder.getBindingAdapterPosition();
+                                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                                    AppItem clickedItem = apps.get(pos);
+                                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item(clickedItem.packageName);
+                                    android.content.ClipData dragData = new android.content.ClipData(
+                                            clickedItem.label,
+                                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
+                                            clipItem);
+                                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
+                                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
+                                    dragStarted[0] = true;
+                                    return true;
                                 }
-                                return true;
                             }
                         }
                         break;
                     case android.view.MotionEvent.ACTION_UP:
                     case android.view.MotionEvent.ACTION_CANCEL:
-                        longPressTriggered[0] = false;
                         dragStarted[0] = false;
                         break;
                 }
                 return false;
             });
+
+            holder.itemView.setOnLongClickListener(v -> {
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                    AppItem clickedItem = apps.get(pos);
+                    if (longClickListener != null) {
+                        longClickListener.onAppLongClick(clickedItem, v);
+                    }
+                }
+                return true;
+            });
+        } else {
+            // Mode normal : clic pour ouvrir, long clic pour options
+            holder.itemView.setOnTouchListener(null);
 
             holder.itemView.setOnClickListener(v -> {
                 int pos = holder.getBindingAdapterPosition();
@@ -440,7 +443,6 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
                 int pos = holder.getBindingAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
                     AppItem clickedItem = apps.get(pos);
-                    longPressTriggered[0] = true;
                     if (longClickListener != null) {
                         longClickListener.onAppLongClick(clickedItem, v);
                     }

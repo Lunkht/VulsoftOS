@@ -1372,10 +1372,6 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
     }
 
     private void showAppOptions(AppItem appItem, View view) {
-        if (isDragEnabled) {
-            return;
-        }
-
         View popupView = getLayoutInflater().inflate(R.layout.dialog_app_options, null);
         
         // Set width constraint for the popup
