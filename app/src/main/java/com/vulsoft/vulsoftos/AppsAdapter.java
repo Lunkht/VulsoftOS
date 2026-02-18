@@ -366,64 +366,25 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
             }
         }
 
-        // Mode organisation actif : glisser-déplacer + menu au long clic
         if (isDragEnabled) {
-            final float[] touchStart = new float[2];
-            final boolean[] dragStarted = { false };
-            final int touchSlop = android.view.ViewConfiguration.get(context).getScaledTouchSlop();
-
             holder.itemView.setOnClickListener(null);
-
-            holder.itemView.setOnTouchListener((v, event) -> {
-                switch (event.getAction()) {
-                    case android.view.MotionEvent.ACTION_DOWN:
-                        touchStart[0] = event.getRawX();
-                        touchStart[1] = event.getRawY();
-                        dragStarted[0] = false;
-                        break;
-                    case android.view.MotionEvent.ACTION_MOVE:
-                        if (!dragStarted[0]) {
-                            float dx = Math.abs(event.getRawX() - touchStart[0]);
-                            float dy = Math.abs(event.getRawY() - touchStart[1]);
-                            if (dx > touchSlop || dy > touchSlop) {
-                                int pos = holder.getBindingAdapterPosition();
-                                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                                    AppItem clickedItem = apps.get(pos);
-                                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item(clickedItem.packageName);
-                                    android.content.ClipData dragData = new android.content.ClipData(
-                                            clickedItem.label,
-                                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
-                                            clipItem);
-                                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
-                                    dragStarted[0] = true;
-                                    return true;
-                                }
-                            }
-                        }
-                        break;
-                    case android.view.MotionEvent.ACTION_UP:
-                    case android.view.MotionEvent.ACTION_CANCEL:
-                        dragStarted[0] = false;
-                        break;
-                }
-                return false;
-            });
-
+            holder.itemView.setOnTouchListener(null);
             holder.itemView.setOnLongClickListener(v -> {
                 int pos = holder.getBindingAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
                     AppItem clickedItem = apps.get(pos);
-                    if (longClickListener != null) {
-                        longClickListener.onAppLongClick(clickedItem, v);
-                    }
+                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item(clickedItem.packageName);
+                    android.content.ClipData dragData = new android.content.ClipData(
+                            clickedItem.label,
+                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
+                            clipItem);
+                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
+                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
                 }
                 return true;
             });
         } else {
-            // Mode normal : clic pour ouvrir, long clic pour options
             holder.itemView.setOnTouchListener(null);
-
             holder.itemView.setOnClickListener(v -> {
                 int pos = holder.getBindingAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
