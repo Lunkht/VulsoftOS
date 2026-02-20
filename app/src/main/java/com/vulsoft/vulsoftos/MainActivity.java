@@ -215,6 +215,10 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         recyclerAppsList = findViewById(R.id.recyclerAppsList);
         layoutPageIndicator = findViewById(R.id.layoutPageIndicator);
         searchBar = findViewById(R.id.searchBar);
+        View layoutDragActions = findViewById(R.id.layoutDragActions);
+        View dropInfo = findViewById(R.id.dropInfo);
+        View dropHide = findViewById(R.id.dropHide);
+        View dropUninstall = findViewById(R.id.dropUninstall);
 
         // Setup btnCategories
         View btnCategories = findViewById(R.id.btnCategories);
@@ -260,6 +264,18 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         // Setup Drag & Drop Listener
         viewPagerApps.setOnDragListener(dragListener);
         recyclerDock.setOnDragListener(dragListener);
+        if (layoutDragActions != null) {
+            layoutDragActions.setOnDragListener(dragListener);
+        }
+        if (dropInfo != null) {
+            dropInfo.setOnDragListener(dragListener);
+        }
+        if (dropHide != null) {
+            dropHide.setOnDragListener(dragListener);
+        }
+        if (dropUninstall != null) {
+            dropUninstall.setOnDragListener(dragListener);
+        }
 
         // Setup Dock
         recyclerDock.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -1391,9 +1407,10 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         
         popupWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
         popupWindow.setElevation(10);
-        
-        // Logic to dismiss
-        Runnable dismissAction = popupWindow::dismiss;
+
+        Runnable dismissAction = () -> {
+            popupWindow.dismiss();
+        };
 
         popupView.findViewById(R.id.btnAppInfo).setOnClickListener(v -> {
             openAppInfo(appItem.packageName);
@@ -1440,16 +1457,16 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         // Uninstall
         View optionUninstall = popupView.findViewById(R.id.optionUninstall);
         if (appItem.type == AppItem.Type.WIDGET) {
-             ((TextView)optionUninstall.findViewById(R.id.textAppName)).setText("Supprimer le widget");
-             optionUninstall.setOnClickListener(v -> {
-                 deleteWidget(appItem);
-                 dismissAction.run();
-             });
+            ((TextView) optionUninstall.findViewById(R.id.textAppName)).setText("Supprimer le widget");
+            optionUninstall.setOnClickListener(v -> {
+                deleteWidget(appItem);
+                dismissAction.run();
+            });
         } else {
-             optionUninstall.setOnClickListener(v -> {
-                 uninstallApp(appItem.packageName);
-                 dismissAction.run();
-             });
+            optionUninstall.setOnClickListener(v -> {
+                uninstallApp(appItem.packageName);
+                dismissAction.run();
+            });
         }
 
         // Measure and Position
@@ -1468,7 +1485,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         
         // If it goes off screen top, show below
         if (location[1] + yOffset < 0) {
-            yOffset = 0; // Below
+            yOffset = 0;
         }
 
         popupWindow.showAsDropDown(view, xOffset, yOffset);
@@ -1693,8 +1710,12 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
     }
 
     private final View.OnDragListener dragListener = (v, event) -> {
+        View layoutDragActions = findViewById(R.id.layoutDragActions);
         switch (event.getAction()) {
             case android.view.DragEvent.ACTION_DRAG_STARTED:
+                if (layoutDragActions != null) {
+                    layoutDragActions.setVisibility(View.VISIBLE);
+                }
                 return true;
             case android.view.DragEvent.ACTION_DROP:
                 Object localState = event.getLocalState();
@@ -1816,14 +1837,23 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                         saveCurrentLayout();
                         if (pagerAdapter != null) {
                             pagerAdapter.updateApps();
+                    } else if (viewId == R.id.dropInfo) {
+                        openAppInfo(item.packageName);
+                    } else if (viewId == R.id.dropHide) {
+                        hideApp(item.packageName);
+                    } else if (viewId == R.id.dropUninstall) {
+                        uninstallApp(item.packageName);
                         }
                     }
                 }
                 return true;
             case android.view.DragEvent.ACTION_DRAG_ENDED:
+                if (layoutDragActions != null) {
+                    layoutDragActions.setVisibility(View.GONE);
+                }
                 return true;
             default:
-                return false;
+                return true;
         }
     };
 

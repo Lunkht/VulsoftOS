@@ -293,7 +293,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
         // Theme Adaptation
         if (ThemeManager.THEME_AMOLED.equals(currentTheme)) {
             background.setColor(context.getColor(R.color.shmo_squircle_bg));
-            background.setStroke(1, context.getColor(R.color.shmo_neon_lime));
+            background.setStroke(3, context.getColor(R.color.shmo_neon_lime));
             holder.label.setTextColor(context.getColor(R.color.shmo_neon_lime));
             holder.icon.clearColorFilter();
         } else if (ThemeManager.THEME_GLASS.equals(currentTheme)) {
