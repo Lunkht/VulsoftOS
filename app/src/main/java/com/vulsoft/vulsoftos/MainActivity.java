@@ -215,10 +215,6 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         recyclerAppsList = findViewById(R.id.recyclerAppsList);
         layoutPageIndicator = findViewById(R.id.layoutPageIndicator);
         searchBar = findViewById(R.id.searchBar);
-        View layoutDragActions = findViewById(R.id.layoutDragActions);
-        View dropInfo = findViewById(R.id.dropInfo);
-        View dropHide = findViewById(R.id.dropHide);
-        View dropUninstall = findViewById(R.id.dropUninstall);
 
         // Setup btnCategories
         View btnCategories = findViewById(R.id.btnCategories);
@@ -264,18 +260,6 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         // Setup Drag & Drop Listener
         viewPagerApps.setOnDragListener(dragListener);
         recyclerDock.setOnDragListener(dragListener);
-        if (layoutDragActions != null) {
-            layoutDragActions.setOnDragListener(dragListener);
-        }
-        if (dropInfo != null) {
-            dropInfo.setOnDragListener(dragListener);
-        }
-        if (dropHide != null) {
-            dropHide.setOnDragListener(dragListener);
-        }
-        if (dropUninstall != null) {
-            dropUninstall.setOnDragListener(dragListener);
-        }
 
         // Setup Dock
         recyclerDock.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -1709,151 +1693,134 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         }
     }
 
-    private final View.OnDragListener dragListener = (v, event) -> {
-        View layoutDragActions = findViewById(R.id.layoutDragActions);
-        switch (event.getAction()) {
-            case android.view.DragEvent.ACTION_DRAG_STARTED:
-                if (layoutDragActions != null) {
-                    layoutDragActions.setVisibility(View.VISIBLE);
-                }
-                return true;
-            case android.view.DragEvent.ACTION_DROP:
-                Object localState = event.getLocalState();
-                if (localState instanceof AppItem) {
-                    AppItem item = (AppItem) localState;
-                    int viewId = v.getId();
-                    
-                    if (viewId == R.id.recyclerDock) {
-                        // Handle Dock Drop (Add or Reorder)
-                        float x = event.getX();
-                        float y = event.getY();
-                        View child = recyclerDock.findChildViewUnder(x, y);
-                        int newPos = (child != null) ? recyclerDock.getChildAdapterPosition(child) : dockItems.size();
-                        if (newPos < 0)
-                            newPos = dockItems.size();
+    private final View.OnDragListener dragListener = new View.OnDragListener() {
+        @Override
+        public boolean onDrag(View v, android.view.DragEvent event) {
+            switch (event.getAction()) {
+                case android.view.DragEvent.ACTION_DRAG_STARTED:
+                    return true;
+                case android.view.DragEvent.ACTION_DROP:
+                    Object localState = event.getLocalState();
+                    if (localState instanceof AppItem) {
+                        AppItem item = (AppItem) localState;
+                        int viewId = v.getId();
 
-                        int existingPos = dockItems.indexOf(item);
-
-                        // Fallback search if indexOf fails (e.g. Folder reference mismatch after reload)
-                        if (existingPos == -1) {
-                            for (int i = 0; i < dockItems.size(); i++) {
-                                AppItem d = dockItems.get(i);
-                                if (d.type == item.type) {
-                                    if (d.type == AppItem.Type.APP && d.packageName != null && d.packageName.equals(item.packageName)) {
-                                        existingPos = i;
-                                        break;
-                                    }
-                                    if (d.type == AppItem.Type.FOLDER && d.label != null && d.label.equals(item.label)) {
-                                         // Rough match for folders by label
-                                         existingPos = i;
-                                         break;
-                                    }
-                                    if (d.type == AppItem.Type.WIDGET && d.widgetId == item.widgetId) {
-                                        existingPos = i;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (existingPos != -1) {
-                            // Reorder within Dock
-                            AppItem movedItem = dockItems.remove(existingPos);
-                            if (newPos > existingPos)
-                                newPos--;
-                            if (newPos < 0)
-                                newPos = 0;
-                            if (newPos > dockItems.size())
+                        if (viewId == R.id.recyclerDock) {
+                            float x = event.getX();
+                            float y = event.getY();
+                            View child = recyclerDock.findChildViewUnder(x, y);
+                            int newPos = (child != null) ? recyclerDock.getChildAdapterPosition(child) : dockItems.size();
+                            if (newPos < 0) {
                                 newPos = dockItems.size();
-                            dockItems.add(newPos, movedItem);
-                        } else {
-                            // Add to Dock from Grid
-                            if (dockItems.size() < DOCK_SIZE) {
-                                if (newPos > dockItems.size())
-                                    newPos = dockItems.size();
-                                dockItems.add(newPos, item);
-                                
-                                // Remove from Grid
-                                appItems.remove(item);
-                                if (pagerAdapter != null) {
-                                    pagerAdapter.updateApps();
-                                }
-                            } else {
-                                android.widget.Toast
-                                        .makeText(MainActivity.this, "Dock plein", android.widget.Toast.LENGTH_SHORT)
-                                        .show();
-                                return true;
                             }
-                        }
-                        saveCurrentLayout();
-                        dockAdapter.notifyDataSetChanged();
 
-                    } else if (viewId == R.id.recyclerPageApps || viewId == R.id.viewPagerApps) {
-                        // Drop on Grid -> Remove from Dock AND Add to Grid
-                        
-                        // Check if item is in Dock (source)
-                        if (dockItems.contains(item)) {
-                            removeFromDock(item);
-                        }
-                        
-                        // Add to Grid at position
-                        int currentPage = viewPagerApps.getCurrentItem();
-                        int width = v.getWidth();
-                        int height = v.getHeight();
-                        int globalIndex = appItems.size(); // Default to end
+                            int existingPos = dockItems.indexOf(item);
 
-                        if (width > 0 && height > 0) {
-                            int cellWidth = width / columnsPerRow;
-                            int cellHeight = height / rowsPerPage;
-                            int col = (int) (event.getX() / cellWidth);
-                            int row = (int) (event.getY() / cellHeight);
-                            
-                            if (col >= columnsPerRow) col = columnsPerRow - 1;
-                            if (row >= rowsPerPage) row = rowsPerPage - 1;
-                            if (col < 0) col = 0;
-                            if (row < 0) row = 0;
-                            
-                            int indexOnPage = row * columnsPerRow + col;
-                            int pageSize = columnsPerRow * rowsPerPage;
-                            globalIndex = currentPage * pageSize + indexOnPage;
-                            
-                            if (globalIndex < 0) globalIndex = 0;
-                        }
+                            if (existingPos == -1) {
+                                for (int i = 0; i < dockItems.size(); i++) {
+                                    AppItem d = dockItems.get(i);
+                                    if (d.type == item.type) {
+                                        if (d.type == AppItem.Type.APP && d.packageName != null && d.packageName.equals(item.packageName)) {
+                                            existingPos = i;
+                                            break;
+                                        }
+                                        if (d.type == AppItem.Type.FOLDER && d.label != null && d.label.equals(item.label)) {
+                                            existingPos = i;
+                                            break;
+                                        }
+                                        if (d.type == AppItem.Type.WIDGET && d.widgetId == item.widgetId) {
+                                            existingPos = i;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
 
-                        int oldIndex = appItems.indexOf(item);
-                        if (oldIndex != -1) {
-                            // Reorder within Grid
-                            AppItem movedItem = appItems.remove(oldIndex);
-                            if (globalIndex > oldIndex) globalIndex--;
-                            if (globalIndex < 0) globalIndex = 0;
-                            if (globalIndex > appItems.size()) globalIndex = appItems.size();
-                            appItems.add(globalIndex, movedItem);
-                        } else {
-                            // New to Grid (from Dock or Widget?)
-                            if (globalIndex > appItems.size()) globalIndex = appItems.size();
-                            appItems.add(globalIndex, item);
-                        }
+                            if (existingPos != -1) {
+                                AppItem movedItem = dockItems.remove(existingPos);
+                                if (newPos > existingPos) {
+                                    newPos--;
+                                }
+                                if (newPos < 0) {
+                                    newPos = 0;
+                                }
+                                if (newPos > dockItems.size()) {
+                                    newPos = dockItems.size();
+                                }
+                                dockItems.add(newPos, movedItem);
+                            } else {
+                                if (dockItems.size() < DOCK_SIZE) {
+                                    if (newPos > dockItems.size()) {
+                                        newPos = dockItems.size();
+                                    }
+                                    dockItems.add(newPos, item);
 
-                        saveCurrentLayout();
-                        if (pagerAdapter != null) {
-                            pagerAdapter.updateApps();
-                    } else if (viewId == R.id.dropInfo) {
-                        openAppInfo(item.packageName);
-                    } else if (viewId == R.id.dropHide) {
-                        hideApp(item.packageName);
-                    } else if (viewId == R.id.dropUninstall) {
-                        uninstallApp(item.packageName);
+                                    appItems.remove(item);
+                                    if (pagerAdapter != null) {
+                                        pagerAdapter.updateApps();
+                                    }
+                                } else {
+                                    android.widget.Toast
+                                            .makeText(MainActivity.this, "Dock plein", android.widget.Toast.LENGTH_SHORT)
+                                            .show();
+                                    return true;
+                                }
+                            }
+
+                            saveCurrentLayout();
+                            dockAdapter.notifyDataSetChanged();
+                        } else if (viewId == R.id.recyclerPageApps || viewId == R.id.viewPagerApps) {
+                            if (dockItems.contains(item)) {
+                                removeFromDock(item);
+                            }
+
+                            int currentPage = viewPagerApps.getCurrentItem();
+                            int width = v.getWidth();
+                            int height = v.getHeight();
+                            int globalIndex = appItems.size();
+
+                            if (width > 0 && height > 0) {
+                                int cellWidth = width / columnsPerRow;
+                                int cellHeight = height / rowsPerPage;
+                                int col = (int) (event.getX() / cellWidth);
+                                int row = (int) (event.getY() / cellHeight);
+
+                                if (col >= columnsPerRow) col = columnsPerRow - 1;
+                                if (row >= rowsPerPage) row = rowsPerPage - 1;
+                                if (col < 0) col = 0;
+                                if (row < 0) row = 0;
+
+                                int indexOnPage = row * columnsPerRow + col;
+                                int pageSize = columnsPerRow * rowsPerPage;
+                                globalIndex = currentPage * pageSize + indexOnPage;
+
+                                if (globalIndex < 0) globalIndex = 0;
+                            }
+
+                            int oldIndex = appItems.indexOf(item);
+                            if (oldIndex != -1) {
+                                AppItem movedItem = appItems.remove(oldIndex);
+                                if (globalIndex > oldIndex) globalIndex--;
+                                if (globalIndex < 0) globalIndex = 0;
+                                if (globalIndex > appItems.size()) globalIndex = appItems.size();
+                                appItems.add(globalIndex, movedItem);
+                            } else {
+                                if (globalIndex > appItems.size()) globalIndex = appItems.size();
+                                appItems.add(globalIndex, item);
+                            }
+
+                            saveCurrentLayout();
+                            if (pagerAdapter != null) {
+                                pagerAdapter.updateApps();
+                            }
                         }
                     }
-                }
-                return true;
-            case android.view.DragEvent.ACTION_DRAG_ENDED:
-                if (layoutDragActions != null) {
-                    layoutDragActions.setVisibility(View.GONE);
-                }
-                return true;
-            default:
-                return true;
+                    return true;
+                case android.view.DragEvent.ACTION_DRAG_ENDED:
+                    return true;
+                default:
+                    return true;
+            }
         }
     };
 
