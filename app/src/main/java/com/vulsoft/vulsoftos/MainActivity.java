@@ -215,6 +215,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         recyclerAppsList = findViewById(R.id.recyclerAppsList);
         layoutPageIndicator = findViewById(R.id.layoutPageIndicator);
         searchBar = findViewById(R.id.searchBar);
+        updateUIVisibility();
 
         // Setup btnCategories
         View btnCategories = findViewById(R.id.btnCategories);
@@ -849,6 +850,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                 checkFirstRunAndInitDock(pm);
                 
                 applyLayoutPreferences();
+                updateUIVisibility();
                 if (dockAdapter != null)
                     dockAdapter.notifyDataSetChanged();
                 // We need to notify pagerAdapter too if it exists
@@ -923,10 +925,46 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         }
     }
 
+    private void updateUIVisibility() {
+        if (recyclerDock == null || layoutPageIndicator == null) return;
+        
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean showDockBg = prefs.getBoolean(PREF_SHOW_DOCK_BG, true);
+        
+        boolean hasApps = (appItems != null && !appItems.isEmpty()) || (dockItems != null && !dockItems.isEmpty());
+        
+        if (hasApps) {
+            // Afficher le fond du dock si activé
+            if (showDockBg) {
+                recyclerDock.setBackgroundResource(R.drawable.bg_dock);
+            } else {
+                recyclerDock.setBackground(null);
+            }
+            
+            // Afficher les indicateurs s'il y a plus d'une page ET qu'on est en mode grille
+            String drawerStyle = prefs.getString("drawer_style", "grid");
+            boolean isGridMode = "grid".equals(drawerStyle);
+            
+            if (isGridMode && pagerAdapter != null && pagerAdapter.getItemCount() > 1) {
+                layoutPageIndicator.setVisibility(View.VISIBLE);
+            } else {
+                layoutPageIndicator.setVisibility(View.GONE);
+            }
+        } else {
+            // Cacher tout si pas d'apps (ex: pendant le chargement initial)
+            recyclerDock.setBackground(null);
+            layoutPageIndicator.setVisibility(View.GONE);
+        }
+    }
+
     private void setupPageIndicators(int count) {
         layoutPageIndicator.removeAllViews();
-        if (count <= 1)
+        if (count <= 1) {
+            layoutPageIndicator.setVisibility(View.GONE);
             return;
+        }
+
+        updateUIVisibility();
 
         android.widget.ImageView[] indicators = new android.widget.ImageView[count];
         android.widget.LinearLayout.LayoutParams layoutParams = new android.widget.LinearLayout.LayoutParams(
@@ -1188,11 +1226,13 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                 // Show pager, hide list
                 recyclerAppsList.setVisibility(View.GONE);
                 viewPagerApps.setVisibility(View.VISIBLE);
-                layoutPageIndicator.setVisibility(View.VISIBLE);
+                layoutPageIndicator.setVisibility(View.INVISIBLE); // Hidden by default
                 // Restore padding
                 recyclerAppsList.setPadding((int)(16 * getResources().getDisplayMetrics().density), 0, (int)(16 * getResources().getDisplayMetrics().density), 0);
             }
         }
+        
+        updateUIVisibility();
         
         // boolean dynamicIslandEnabled = prefs.getBoolean("dynamic_island_enabled", false); // Handled by Service now
 
@@ -1262,10 +1302,12 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
 
         if (recyclerDock != null) {
             recyclerDock.setVisibility(showDock ? View.VISIBLE : View.GONE);
+            // Hide dock background by default, it will be shown when apps are loaded
+            recyclerDock.setBackground(null);
         }
 
         if (recyclerDock != null && showDockBg) {
-            recyclerDock.setBackgroundResource(R.drawable.bg_dock);
+            // Background will be applied in updateUIVisibility()
         } else if (recyclerDock != null) {
             recyclerDock.setBackground(null);
         }
@@ -1707,12 +1749,14 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         }
         saveCurrentLayout();
         dockAdapter.notifyDataSetChanged();
+        updateUIVisibility();
     }
 
     private void removeFromDock(AppItem appItem) {
         if (dockItems.remove(appItem)) {
             saveCurrentLayout();
             dockAdapter.notifyDataSetChanged();
+            updateUIVisibility();
         }
     }
 
@@ -1792,6 +1836,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
 
                             saveCurrentLayout();
                             dockAdapter.notifyDataSetChanged();
+                            updateUIVisibility();
                         } else if (viewId == R.id.recyclerPageApps || viewId == R.id.viewPagerApps) {
                             if (dockItems.contains(item)) {
                                 removeFromDock(item);
@@ -1836,6 +1881,7 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
                             if (pagerAdapter != null) {
                                 pagerAdapter.updateApps();
                             }
+                            updateUIVisibility();
                         }
                     }
                     return true;
