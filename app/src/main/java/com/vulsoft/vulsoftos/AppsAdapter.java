@@ -176,47 +176,27 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
             }
         }
 
-        // ✅ FIX: Use getBindingAdapterPosition() instead of capturing 'item'
-        if (isDragEnabled) {
-            holder.itemView.setOnClickListener(null);
-            holder.itemView.setOnLongClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item(
-                            clickedItem.packageName != null ? clickedItem.packageName : "folder");
-                    android.content.ClipData dragData = new android.content.ClipData(
-                            clickedItem.label,
-                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
-                            clipItem);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
+        // Click and Long Click Listeners
+        holder.itemView.setOnClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                AppItem clickedItem = apps.get(pos);
+                if (clickListener != null) {
+                    clickListener.onAppClick(clickedItem);
                 }
-                return true;
-            });
-        } else {
-            holder.itemView.setOnClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    android.util.Log.d("RuvoluteDebug", "Folder clicked at pos " + pos + ": " + clickedItem.label);
-                    if (clickListener != null) {
-                        clickListener.onAppClick(clickedItem);
-                    }
-                }
-            });
+            }
+        });
 
-            holder.itemView.setOnLongClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    if (longClickListener != null) {
-                        longClickListener.onAppLongClick(clickedItem, v);
-                    }
+        holder.itemView.setOnLongClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                AppItem clickedItem = apps.get(pos);
+                if (longClickListener != null) {
+                    longClickListener.onAppLongClick(clickedItem, v);
                 }
-                return true;
-            });
-        }
+            }
+            return true;
+        });
     }
 
     private void bindWidget(AppViewHolder holder, AppItem item) {
@@ -234,34 +214,17 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
         );
         container.addView(hostView, params);
 
-        // ✅ FIX: Use getBindingAdapterPosition()
-        if (isDragEnabled) {
-            hostView.setOnLongClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item("widget_" + clickedItem.widgetId);
-                    android.content.ClipData dragData = new android.content.ClipData(
-                            clickedItem.label,
-                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
-                            clipItem);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
+        // Widget Click/LongClick
+        hostView.setOnLongClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                AppItem clickedItem = apps.get(pos);
+                if (longClickListener != null) {
+                    longClickListener.onAppLongClick(clickedItem, v);
                 }
-                return true;
-            });
-        } else {
-            hostView.setOnLongClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    if (longClickListener != null) {
-                        longClickListener.onAppLongClick(clickedItem, v);
-                    }
-                }
-                return true;
-            });
-        }
+            }
+            return true;
+        });
     }
 
     private void bindApp(AppViewHolder holder, AppItem item) {
@@ -366,51 +329,31 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.AppViewHolder>
             }
         }
 
-        if (isDragEnabled) {
-            holder.itemView.setOnClickListener(null);
-            holder.itemView.setOnTouchListener(null);
-            holder.itemView.setOnLongClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    android.content.ClipData.Item clipItem = new android.content.ClipData.Item(clickedItem.packageName);
-                    android.content.ClipData dragData = new android.content.ClipData(
-                            clickedItem.label,
-                            new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
-                            clipItem);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                    v.startDragAndDrop(dragData, myShadow, clickedItem, 0);
+        // Click and Long Click Listeners
+        holder.itemView.setOnClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                AppItem clickedItem = apps.get(pos);
+                if (isDragEnabled) {
+                    // In drag mode, click could also start drag or do nothing
+                    // For now, let's keep click for launching unless in edit mode
                 }
-                return true;
-            });
-        } else {
-            holder.itemView.setOnTouchListener(null);
-            holder.itemView.setOnClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    android.util.Log.d("RuvoluteDebug", "AppsAdapter: CLICK at position " + pos);
-                    android.util.Log.d("RuvoluteDebug", " - Label: " + clickedItem.label);
-                    android.util.Log.d("RuvoluteDebug", " - Package: " + clickedItem.packageName);
-                    android.util.Log.d("RuvoluteDebug", " - Type: " + clickedItem.type);
+                if (clickListener != null) {
+                    clickListener.onAppClick(clickedItem);
+                }
+            }
+        });
 
-                    if (clickListener != null) {
-                        clickListener.onAppClick(clickedItem);
-                    }
+        holder.itemView.setOnLongClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
+                AppItem clickedItem = apps.get(pos);
+                if (longClickListener != null) {
+                    longClickListener.onAppLongClick(clickedItem, v);
                 }
-            });
-
-            holder.itemView.setOnLongClickListener(v -> {
-                int pos = holder.getBindingAdapterPosition();
-                if (pos != RecyclerView.NO_POSITION && pos < apps.size()) {
-                    AppItem clickedItem = apps.get(pos);
-                    if (longClickListener != null) {
-                        longClickListener.onAppLongClick(clickedItem, v);
-                    }
-                }
-                return true;
-            });
-        }
+            }
+            return true;
+        });
     }
 
     @Override

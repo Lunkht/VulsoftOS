@@ -1372,9 +1372,6 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
     }
 
     private void showAppOptions(AppItem appItem, View view) {
-        if (isDragEnabled) {
-            return;
-        }
         View popupView = getLayoutInflater().inflate(R.layout.dialog_app_options, null);
         
         // Set width constraint for the popup
@@ -1411,12 +1408,38 @@ public class MainActivity extends BaseActivity implements GestureManager.Gesture
         popupView.findViewById(R.id.optionEditIcon).setOnClickListener(v -> {
              startEditMode();
              dismissAction.run();
+             
+             // Start drag immediately for this item
+             android.content.ClipData.Item clipItem = new android.content.ClipData.Item(appItem.packageName);
+             android.content.ClipData dragData = new android.content.ClipData(
+                     appItem.label,
+                     new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
+                     clipItem);
+             View.DragShadowBuilder myShadow = new View.DragShadowBuilder(view);
+             view.startDragAndDrop(dragData, myShadow, appItem, 0);
         });
         
         // Organize
         popupView.findViewById(R.id.optionOrganize).setOnClickListener(v -> {
             startEditMode();
             dismissAction.run();
+            
+            // Start drag immediately for this item
+            android.content.ClipData.Item clipItem;
+            if (appItem.type == AppItem.Type.WIDGET) {
+                clipItem = new android.content.ClipData.Item("widget_" + appItem.widgetId);
+            } else if (appItem.type == AppItem.Type.FOLDER) {
+                clipItem = new android.content.ClipData.Item("folder");
+            } else {
+                clipItem = new android.content.ClipData.Item(appItem.packageName);
+            }
+            
+            android.content.ClipData dragData = new android.content.ClipData(
+                    appItem.label,
+                    new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN},
+                    clipItem);
+            View.DragShadowBuilder myShadow = new View.DragShadowBuilder(view);
+            view.startDragAndDrop(dragData, myShadow, appItem, 0);
         });
         
         // Rename

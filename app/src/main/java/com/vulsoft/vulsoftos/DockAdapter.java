@@ -186,38 +186,19 @@ public class DockAdapter extends RecyclerView.Adapter<DockAdapter.DockViewHolder
             }
         }
 
-        if (isDragEnabled) {
-            holder.itemView.setOnClickListener(null);
-            holder.itemView.setOnTouchListener(null);
-            holder.itemView.setOnLongClickListener(v -> {
-                android.content.ClipData.Item clipItem = new android.content.ClipData.Item(item.packageName != null ? item.packageName : "dock_item");
-                android.content.ClipData dragData = new android.content.ClipData(item.label, new String[]{android.content.ClipDescription.MIMETYPE_TEXT_PLAIN}, clipItem);
-                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.itemView);
-                v.startDragAndDrop(dragData, myShadow, item, 0);
-                return true;
-            });
-        } else {
-            // Normal Mode: Click to Open, Long Click shows Menu
-            holder.itemView.setOnTouchListener(null);
-            
-            holder.itemView.setOnClickListener(v -> {
-                android.util.Log.d("RuvoluteDebug", "DockAdapter: CLICK DETECTED");
-                android.util.Log.d("RuvoluteDebug", " - Label: " + item.label);
-                android.util.Log.d("RuvoluteDebug", " - Package: " + item.packageName);
-                android.util.Log.d("RuvoluteDebug", " - Intent: " + (item.launchIntent != null ? item.launchIntent.toString() : "NULL"));
-                
-                if (listener != null) {
-                    listener.onDockClick(item);
-                }
-            });
+        // Click and Long Click Listeners
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onDockClick(item);
+            }
+        });
 
-            holder.itemView.setOnLongClickListener(v -> {
-                if (longClickListener != null) {
-                    longClickListener.onAppLongClick(item, v);
-                }
-                return true;
-            });
-        }
+        holder.itemView.setOnLongClickListener(v -> {
+            if (longClickListener != null) {
+                longClickListener.onAppLongClick(item, v);
+            }
+            return true;
+        });
     }
 
     @Override
